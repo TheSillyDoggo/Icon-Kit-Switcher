@@ -2,6 +2,7 @@
 
 #include <Geode/Geode.hpp>
 #include <Geode/utils/web.hpp>
+#include <Geode/ui/TextInput.hpp>
 
 using namespace geode::prelude;
 
@@ -164,7 +165,7 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
 {
     public:
         ScrollLayer* scroll = nullptr;
-        InputNode* searchBar = nullptr;
+        TextInput* searchBar = nullptr;
         CCLabelBMFont* error = nullptr;
         CCLabelBMFont* error2 = nullptr;
         bool hasAdded = false;
@@ -317,9 +318,9 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
             auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(IconSelectLayer::onClose));
             menu->addChildAtPosition(ok, Anchor::Bottom, ccp(0, 22.5f));
 
-            searchBar = InputNode::create(350.0f / 0.8f, "Search Icon Kits");
+            searchBar = TextInput::create(350.0f / 0.8f, "Search Icon Kits");
             searchBar->setScale(0.8f);
-            searchBar->getInput()->setDelegate(this);
+            searchBar->setDelegate(this);
             menu->addChildAtPosition(searchBar, Anchor::Top, ccp(0, -45));
 
             auto bg = CCScale9Sprite::create("square02_small.png");

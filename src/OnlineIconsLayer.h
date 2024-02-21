@@ -2,6 +2,7 @@
 
 #include <Geode/Geode.hpp>
 #include <Geode/utils/web.hpp>
+#include <Geode/ui/TextInput.hpp>
 
 using namespace geode::prelude;
 
@@ -113,7 +114,7 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
     public:
         CCLayer* l = nullptr;
         CCLayerColor* titleBar = nullptr;
-        InputNode* searchBar = nullptr;
+        TextInput* searchBar = nullptr;
         LoadingCircle* circle = nullptr;
         ScrollLayer* scroll = nullptr;
 
@@ -264,10 +265,10 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
             titleBar->setVisible(false);
             l->addChildAtPosition(titleBar, Anchor::TopLeft, ccp(3, 0));
 
-            searchBar = InputNode::create(342.0f / 0.65f, "Search Icon Kits");
+            searchBar = TextInput::create(342.0f / 0.65f, "Search Icon Kits");
             searchBar->setScale(0.65f);
             searchBar->setAnchorPoint(ccp(0, 0.5f));
-            searchBar->getInput()->setDelegate(this);
+            searchBar->setDelegate(this);
             titleBar->addChildAtPosition(searchBar, Anchor::Left, ccp(4, 0));
 
             error2 = CCLabelBMFont::create("No results found", "bigFont.fnt");
@@ -280,7 +281,7 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
 
             l->addChildAtPosition(error2, Anchor::Center);
 
-            CCTouchDispatcher::get()->addTargetedDelegate(searchBar->getInput(), -1024, true);
+            CCTouchDispatcher::get()->addTargetedDelegate(searchBar->getInputNode(), -1024, true);
 
             CCTouchDispatcher::get()->addTargetedDelegate(scroll, -134, true);
 

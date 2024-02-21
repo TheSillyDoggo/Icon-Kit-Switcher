@@ -2,6 +2,7 @@
 
 #include <Geode/Geode.hpp>
 #include <Geode/utils/web.hpp>
+#include <Geode/ui/TextInput.hpp>
 
 using namespace geode::prelude;
 
@@ -11,7 +12,7 @@ class RenameIconKitLayer : public CCLayerColor
 {
     public:
         Icon* icon = nullptr;
-        InputNode* inp = nullptr;
+        TextInput* inp = nullptr;
 
         virtual void keyBackClicked()
         {
@@ -41,7 +42,7 @@ class RenameIconKitLayer : public CCLayerColor
             auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(RenameIconKitLayer::onClose));
             menu->addChildAtPosition(ok, Anchor::Center, ccp(0, -63));
 
-            inp = InputNode::create(260, "Icon Kit Name");
+            inp = TextInput::create(260, "Icon Kit Name");
             inp->setString(icon->name);
             menu->addChildAtPosition(inp, Anchor::Center);
 
