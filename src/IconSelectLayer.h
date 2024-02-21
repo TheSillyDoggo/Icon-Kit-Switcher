@@ -6,6 +6,7 @@
 using namespace geode::prelude;
 
 #include "OnlineIconsLayer.h"
+#include "RenameIconKitLayer.h"
 #include "Icon.h"
 
 class IconCell : public CCLayerColor
@@ -36,6 +37,13 @@ class IconCell : public CCLayerColor
         void onTrash(CCObject* sender);
 
         void onShare(CCObject* sender);
+
+        void onRename(CCObject* sender)
+        {
+            auto icn = as<Icon*>(as<CCNode*>(sender)->getUserData());
+
+            RenameIconKitLayer::addToScene(icn);
+        }
 
         bool init(Icon* icon, int i, bool isLast)
         {
@@ -92,6 +100,14 @@ class IconCell : public CCLayerColor
             auto trash = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("GJ_trashBtn_001.png"), this, menu_selector(IconCell::onTrash));
             trash->setTag(i);
             btns->addChildAtPosition(trash, Anchor::Center, ccp(-45, -45));
+
+            auto rename = CCMenuItemSpriteExtra::create(CircleButtonSprite::create(CCSprite::createWithSpriteFrameName("geode.loader/pencil.png"), CircleBaseColor::Green, CircleBaseSize::Big), this, menu_selector(IconCell::onRename));
+            rename->setUserData(icon);
+
+            rename->m_baseScale = share->getContentSize().width / rename->getContentSize().width;
+            rename->setScale(rename->m_baseScale);
+            
+            btns->addChildAtPosition(rename, Anchor::Center, ccp(-45, 45));
 
             if (icon->hasUploaded)
             {
@@ -456,4 +472,15 @@ void Icon::addToKit()
 
     IconSelectLayer::instance->icons.push_back(this);
     IconSelectLayer::instance->refreshIcons();
+}
+
+void RenameIconKitLayer::onClose(CCObject*)
+{
+    icon->name = inp->getString();
+
+    IconSelectLayer::instance->refreshIcons(false);
+
+    CCTouchDispatcher::get()->removeDelegate(this);
+
+    this->removeFromParent();
 }

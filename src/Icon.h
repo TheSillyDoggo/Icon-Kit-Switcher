@@ -171,7 +171,7 @@ class Icon
             ss << ":";
             ss << jetpack;
             ss << ":";
-            ss << hasUploaded ? 1 : 0;
+            ss << (hasUploaded ? 1 : 0);
 
             return ss.str();
         }
