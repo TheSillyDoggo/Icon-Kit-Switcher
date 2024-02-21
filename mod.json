@@ -6,11 +6,6 @@
 	"name": "Icon Kit Switcher",
 	"developers": [ "TheSillyDoggo", "Uproxide"],
 	"description": "startpos switcher but icons",
-	"resources": {
-		"sprites": [
-			"resources/*.png"
-		]
-	},
 	"dependencies": [
         {
             "id": "geode.node-ids",

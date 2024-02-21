@@ -340,9 +340,7 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
             add->setScale(add->m_baseScale);
             menu->addChildAtPosition(add, Anchor::BottomRight, ccp(-30, 30));
 
-            auto online = CCMenuItemSpriteExtra::create(CCSprite::create("online.png"_spr), this, menu_selector(IconSelectLayer::onOnlineIcons));
-            online->m_baseScale = 0.85f * 0.35f;
-            online->setScale(online->m_baseScale);
+            auto online = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("GJ_myServerBtn_001.png"), this, menu_selector(IconSelectLayer::onOnlineIcons));
             menu->addChildAtPosition(online, Anchor::BottomLeft, ccp(30, 30));
 
             error = CCLabelBMFont::create("Nothing here yet :(", "bigFont.fnt");
