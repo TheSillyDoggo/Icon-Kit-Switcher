@@ -111,8 +111,6 @@ class IconCell : public CCLayerColor
 
             if (icon->hasUploaded)
             {
-                log::info(icon->name);
-
                 share->setEnabled(false);
                 as<CCSprite*>(share->getChildren()->objectAtIndex(0))->setColor(ccc3(100, 100, 100));
             }
