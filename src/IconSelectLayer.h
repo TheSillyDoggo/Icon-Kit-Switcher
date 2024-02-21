@@ -95,8 +95,10 @@ class IconCell : public CCLayerColor
 
             if (icon->hasUploaded)
             {
-                trash->setEnabled(false);
-                as<CCSprite*>(trash->getChildren()->objectAtIndex(0))->setColor(ccc3(100, 100, 100));
+                log::info(icon->name);
+
+                share->setEnabled(false);
+                as<CCSprite*>(share->getChildren()->objectAtIndex(0))->setColor(ccc3(100, 100, 100));
             }
 
             trash->m_baseScale = share->getContentSize().width / trash->getContentSize().width;
@@ -421,31 +423,31 @@ void IconCell::onUse(CCObject* sender)
 
 void IconCell::onShare(CCObject* sender)
 {
-    auto icon = as<IconCell*>(as<CCNode*>(sender)->getUserData())->icon;
+    auto icn = as<IconCell*>(as<CCNode*>(sender)->getUserData())->icon;
     
-    if (icon->hasUploaded)
+    if (icn->hasUploaded)
         return FLAlertLayer::create("Failed to upload kit", "You've <cg>already</c> uploaded this <cl>icon</c> kit.", "OK")->show();
 
     auto circle = LoadingCircle::create();
     circle->setFade(true);
     circle->show();
 
-    auto url = std::format("https://www.uproxide.xyz/api/v1/iconkit/addNewKit.php?AccountID={}&Cube={}&Ship={}&Ball={}&Bird={}&Dart={}&Robot={}&Spider={}&Swing={}&Jetpack={}&GlowEnabled={}&GlowColor={}&PrimaryColor={}&SecondaryColor={}&KitName={}", GJAccountManager::get()->m_accountID, icon->cube, icon->ship, icon->ball, icon->ufo, icon->wave, icon->robot, icon->spider, icon->swing, icon->jetpack, icon->glow ? 1 : 0, icon->colour3, icon->colour1, icon->colour2, icon->name);
+    auto url = fmt::format("https://www.uproxide.xyz/api/v1/iconkit/addNewKit.php?AccountID={}&Cube={}&Ship={}&Ball={}&Bird={}&Dart={}&Robot={}&Spider={}&Swing={}&Jetpack={}&GlowEnabled={}&GlowColor={}&PrimaryColor={}&SecondaryColor={}&KitName={}", GJAccountManager::get()->m_accountID, icon->cube, icon->ship, icon->ball, icon->ufo, icon->wave, icon->robot, icon->spider, icon->swing, icon->jetpack, icon->glow ? 1 : 0, icon->colour3, icon->colour1, icon->colour2, icon->name);
 
     web::AsyncWebRequest()
     .post(url)
     .text()
-    .then([circle, icon, this](std::string const& catgirl) {
+    .then([circle, icn, this](std::string const& catgirl) {
         circle->removeFromParent();
-        icon->hasUploaded = true;
+        icn->hasUploaded = true;
+        IconSelectLayer::instance->refreshIcons(false);
         return FLAlertLayer::create("Uploaded Kit", "<cg>SUCCESS</c> uploading kit", "OK")->show();
     })
     .expect([circle](std::string const& error) {
         circle->removeFromParent();
+        IconSelectLayer::instance->refreshIcons(false);
         return FLAlertLayer::create("Failed to upload kit", ("<cr>FAILED</c> to upload kit: " + error).c_str(), "OK")->show();
     });
-
-    IconSelectLayer::instance->refreshIcons(false);
 }
 
 void Icon::addToKit()

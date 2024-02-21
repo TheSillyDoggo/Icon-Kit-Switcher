@@ -37,6 +37,7 @@ class OnlineIconCell : public CCLayerColor
         void onAdd(CCObject* sender)
         {
             auto ico = as<Icon*>(as<CCNode*>(sender)->getUserData());
+            ico->hasUploaded = true;
 
             ico->addToKit();
         }
