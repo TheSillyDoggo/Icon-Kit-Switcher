@@ -100,7 +100,7 @@ class OnlineIconCell : public CCLayerColor
             use->setUserData(icon);
             btns->addChildAtPosition(use, Anchor::Center, ccp(0, 0));
 
-            if (strcmp(GJAccountManager::get()->m_username.c_str(), "TheSillyDoggo") || strcmp(GJAccountManager::get()->m_username.c_str(), "Uproxide"))
+            if ((std::string(GJAccountManager::get()->m_username) == "TheSillyDoggo") || (std::string(GJAccountManager::get()->m_username) == "Uproxide"))
             {
                 auto delet = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("GJ_deleteServerBtn_001.png"), this, menu_selector(OnlineIconCell::onDev));
                 delet->setUserData(icon);
@@ -382,7 +382,7 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
 
             l->addChildAtPosition(error2, Anchor::Center);
 
-            if (strcmp(GJAccountManager::get()->m_username.c_str(), "TheSillyDoggo") || strcmp(GJAccountManager::get()->m_username.c_str(), "Uproxide"))
+            if ((std::string(GJAccountManager::get()->m_username) == "TheSillyDoggo") || (std::string(GJAccountManager::get()->m_username) == "Uproxide"))
             {
                 auto devMenu = CCMenu::create();
 

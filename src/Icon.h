@@ -135,6 +135,18 @@ class Icon
             icn->name = js["kitName"].as_string();
             icn->uploader = js["uploaderName"].as_string();
 
+            if (icn->name.starts_with('"'))
+                icn->name = icn->name.substr(1);
+
+            if (icn->name.ends_with('"'))
+                icn->name = icn->name.substr(0, icn->name.size() - 1);
+
+            if (icn->uploader.starts_with('"'))
+                icn->uploader = icn->uploader.substr(1);
+
+            if (icn->uploader.ends_with('"'))
+                icn->uploader = icn->uploader.substr(0, icn->uploader.size() - 1);
+
             return icn;
         }
 
