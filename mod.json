@@ -7,9 +7,9 @@
 	},
 	"version": "v1.0.0",
 	"id": "thesillydoggo.icon_kit_switcher",
-	"name": "Icon Kit Switcher",
+	"name": "Icon Save 2.2",
 	"developers": [ "TheSillyDoggo", "Uproxide"],
-	"description": "startpos switcher but icons",
+	"description": "startpos switcher but icons and not startpos switcher",
 	"dependencies": [
         {
             "id": "geode.node-ids",

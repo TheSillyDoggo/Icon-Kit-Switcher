@@ -1,6 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/GJGarageLayer.hpp>
 #include <Geode/modify/ProfilePage.hpp>
+#include <Geode/modify/CCLayerColor.hpp>
 
 using namespace geode::prelude;
 

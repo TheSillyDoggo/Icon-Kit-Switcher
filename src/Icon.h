@@ -17,7 +17,7 @@ class Icon
     public:
         int cube, ship, ball, ufo, wave, robot, spider, swing, colour1, colour2, colour3, trail, jetpack;
         bool glow, explode; // imma be honest i dont know what explode does
-        std::string name;
+        std::string name, uploader;
         bool hasUploaded = false;
         int id = 0;
         int accountID = 0;
@@ -133,6 +133,7 @@ class Icon
             icn->colour2 = js["secondaryColor"].as_int();
             icn->colour3 = js["glowColor"].as_int();
             icn->name = js["kitName"].as_string();
+            icn->uploader = js["uploaderName"].as_string();
 
             return icn;
         }

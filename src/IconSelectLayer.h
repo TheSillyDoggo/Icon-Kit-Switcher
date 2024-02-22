@@ -27,6 +27,8 @@ class IconCell : public CCLayerColor
             if (icon->glow)
                 plr->setGlowOutline(GameManager::get()->colorForIdx(icon->colour3));
 
+            plr->setScale(0.9f);
+
             return plr;
         }
 
@@ -46,7 +48,7 @@ class IconCell : public CCLayerColor
             RenameIconKitLayer::addToScene(icn);
         }
 
-        bool init(Icon* icon, int i, bool isLast)
+        bool init(Icon* icon, int i, bool isLast, bool compactMode)
         {
             if (!CCLayerColor::init())
                 return false;
@@ -59,6 +61,10 @@ class IconCell : public CCLayerColor
                 this->setOpacity(100);
 
             this->setContentSize(ccp(350, 45));
+
+            if (!compactMode)
+                this->setContentSize(ccp(350, 60));
+
             this->setAnchorPoint(ccp(0, 0));
 
             auto name = CCLabelBMFont::create((icon->name.size() != 0 ? icon->name.c_str() : "Unnamed Kit"), "bigFont.fnt");
@@ -84,7 +90,12 @@ class IconCell : public CCLayerColor
             layoutIcons->setScale(0.7f);
 
             auto btns = CCMenu::create();
-            btns->setScale(0.245f);
+
+            if (compactMode)
+                btns->setScale(0.245f);
+            else
+                btns->setScale(0.335f);
+
             btns->setContentSize(ccp(0, 0));
 
             auto use = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("GJ_selectSongBtn_001.png"), this, menu_selector(IconCell::onUse));
@@ -138,7 +149,7 @@ class IconCell : public CCLayerColor
             }
 
             this->addChildAtPosition(layoutIcons, Anchor::Left, ccp(16, -7));
-            this->addChildAtPosition(btns, Anchor::Right, ccp(-45, 0));
+            this->addChildAtPosition(btns, Anchor::Right, ccp(-45 - (!compactMode ? 15 : 0), 0));
 
             if (icon->name.size() == 0)
                 icon->name = "Unnamed Kit";
@@ -148,10 +159,10 @@ class IconCell : public CCLayerColor
             return true;
         }
 
-        static IconCell* create(Icon* icon, int i, bool isLast)
+        static IconCell* create(Icon* icon, int i, bool isLast, bool isCompactMode)
         {
             IconCell* pRet = new IconCell();
-            if (pRet && pRet->init(icon, i, isLast)) {
+            if (pRet && pRet->init(icon, i, isLast, isCompactMode)) {
                 pRet->autorelease();
                 return pRet;
             } else {
@@ -169,6 +180,7 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
         CCLabelBMFont* error = nullptr;
         CCLabelBMFont* error2 = nullptr;
         bool hasAdded = false;
+        bool compactMode = false;
 
         static inline IconSelectLayer* instance = nullptr;
 
@@ -184,6 +196,14 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
             this->removeFromParent();
         }
 
+        void onCompact(CCObject*)
+        {
+            compactMode = !compactMode;
+            Mod::get()->setSavedValue<bool>("compact-mode", compactMode);
+
+            refreshIcons();
+        }
+
         void refreshIcons(bool move = true)
         {
             auto content = scroll->m_contentLayer;
@@ -196,7 +216,7 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
             {
                 if (toLower(icons[i]->name).find(toLower(searchBar->getString())) != std::string::npos)
                 {
-                    auto cell = IconCell::create(icons[i], i, i == (icons.size() - 1));
+                    auto cell = IconCell::create(icons[i], i, i == (icons.size() - 1), compactMode);
 
                     content->addChild(cell);
                 }
@@ -214,6 +234,11 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
 
             float height = std::max<float>(scroll->getContentSize().height, 45 * content->getChildrenCount());
 
+            if (!compactMode)
+            {
+                height = std::max<float>(scroll->getContentSize().height, 60 * content->getChildrenCount());
+            }
+
             content->setContentSize(ccp(content->getContentSize().width, height));
 
             CCArrayExt<IconCell*> objects = content->getChildren();
@@ -222,7 +247,10 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
 
 			for (auto* obj : objects) {
                 i++;
-				obj->setPositionY(height - (45 * i));
+                if (compactMode)
+				    obj->setPositionY(height - (45 * i));
+                else
+                    obj->setPositionY(height - (60 * i));
 			}
 
             if (move)
@@ -283,6 +311,14 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
             if (!CCLayerColor::init())
                 return false;
 
+            compactMode = Mod::get()->getSavedValue("compact-mode", 
+                #ifdef GEODE_IS_DESKTOP
+                true
+                #else
+                false
+                #endif
+            );
+
             instance = this;
 
             auto ic = split(Mod::get()->getSavedValue<std::string>("saved-icons"), ';');
@@ -317,6 +353,25 @@ class IconSelectLayer : public CCLayerColor, TextInputDelegate
 
             auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(IconSelectLayer::onClose));
             menu->addChildAtPosition(ok, Anchor::Bottom, ccp(0, 22.5f));
+
+
+            auto unextendedIconSpr = CCSprite::create("GJ_button_02.png"); // shamelessly stolen from geode :)
+            unextendedIconSpr->setScale(.75f);
+
+            auto unextendedIconTopSpr = CCSprite::createWithSpriteFrameName("GJ_smallModeIcon_001.png");
+            unextendedIconTopSpr->setPosition(unextendedIconSpr->getContentSize() / 2);
+            unextendedIconSpr->addChild(unextendedIconTopSpr);
+
+            auto extendedIconSpr = CCSprite::create("GJ_button_01.png");
+            extendedIconSpr->setScale(.75f);
+
+            auto extendedIconTopSpr = CCSprite::createWithSpriteFrameName("GJ_smallModeIcon_001.png");
+            extendedIconTopSpr->setPosition(extendedIconSpr->getContentSize() / 2);
+            extendedIconSpr->addChild(extendedIconTopSpr);
+
+            auto extBtn = CCMenuItemToggler::create(extendedIconSpr, unextendedIconSpr, this, menu_selector(IconSelectLayer::onCompact));
+            extBtn->toggle(compactMode);
+            menu->addChildAtPosition(extBtn, Anchor::Center, ccp(-195, 0));
 
             searchBar = TextInput::create(350.0f / 0.8f, "Search Icon Kits");
             searchBar->setScale(0.8f);
@@ -430,7 +485,6 @@ void IconCell::onUse(CCObject* sender)
     if (auto garage = getChildOfType<GJGarageLayer>(CCScene::get(), 0))
     {
         garage->updatePlayerColors();
-        garage->setupIconSelect();
     }
 }
 
@@ -438,29 +492,41 @@ void IconCell::onShare(CCObject* sender)
 {
     auto icn = as<IconCell*>(as<CCNode*>(sender)->getUserData())->icon;
     
+    if (GJAccountManager::get()->m_accountID == 0)
+        return FLAlertLayer::create("Failed to upload kit", "You must be logged into a <cg>Geometry Dash</c> account to upload icon kits.\nYou can create one for free from the settings button on the main menu", "OK")->show();
+
     if (icn->hasUploaded)
         return FLAlertLayer::create("Failed to upload kit", "You've <cg>already</c> uploaded this <cl>icon</c> kit.", "OK")->show();
 
-    auto circle = LoadingCircle::create();
-    circle->setFade(true);
-    circle->show();
+    geode::createQuickPopup(
+        "Upload Kit",
+        "Are you sure you want to\n<cp>upload</c> this kit?",
+        "No", "Upload",
+        [this, icn](FLAlertLayer* tis, bool btn2) {
+            if (btn2) {
+                auto circle = LoadingCircle::create();
+                circle->setFade(true);
+                circle->show();
 
-    auto url = fmt::format("https://www.uproxide.xyz/api/v1/iconkit/addNewKit.php?AccountID={}&Cube={}&Ship={}&Ball={}&Bird={}&Dart={}&Robot={}&Spider={}&Swing={}&Jetpack={}&GlowEnabled={}&GlowColor={}&PrimaryColor={}&SecondaryColor={}&KitName={}", GJAccountManager::get()->m_accountID, icon->cube, icon->ship, icon->ball, icon->ufo, icon->wave, icon->robot, icon->spider, icon->swing, icon->jetpack, icon->glow ? 1 : 0, icon->colour3, icon->colour1, icon->colour2, icon->name);
+                auto url = fmt::format("https://www.uproxide.xyz/api/v1/iconkit/addNewKit.php?AccountID={}&Cube={}&Ship={}&Ball={}&Bird={}&Dart={}&Robot={}&Spider={}&Swing={}&Jetpack={}&GlowEnabled={}&GlowColor={}&PrimaryColor={}&SecondaryColor={}&KitName={}&Uploader={}", GJAccountManager::get()->m_accountID, icon->cube, icon->ship, icon->ball, icon->ufo, icon->wave, icon->robot, icon->spider, icon->swing, icon->jetpack, icon->glow ? 1 : 0, icon->colour3, icon->colour1, icon->colour2, icon->name, GJAccountManager::get()->m_username);
 
-    web::AsyncWebRequest()
-    .post(url)
-    .text()
-    .then([circle, icn, this](std::string const& catgirl) {
-        circle->removeFromParent();
-        icn->hasUploaded = true;
-        IconSelectLayer::instance->refreshIcons(false);
-        return FLAlertLayer::create("Uploaded Kit", "<cg>SUCCESS</c> uploading kit", "OK")->show();
-    })
-    .expect([circle](std::string const& error) {
-        circle->removeFromParent();
-        IconSelectLayer::instance->refreshIcons(false);
-        return FLAlertLayer::create("Failed to upload kit", ("<cr>FAILED</c> to upload kit: " + error).c_str(), "OK")->show();
-    });
+                web::AsyncWebRequest()
+                .post(url)
+                .text()
+                .then([circle, icn, this](std::string const& catgirl) {
+                    circle->removeFromParent();
+                    icn->hasUploaded = true;
+                    IconSelectLayer::instance->refreshIcons(false);
+                    return FLAlertLayer::create("Uploaded Kit", "<cg>SUCCESS</c> uploading kit", "OK")->show();
+                })
+                .expect([circle](std::string const& error) {
+                    circle->removeFromParent();
+                    IconSelectLayer::instance->refreshIcons(false);
+                    return FLAlertLayer::create("Failed to upload kit", ("<cr>FAILED</c> to upload kit: " + error).c_str(), "OK")->show();
+                });
+            }
+        }
+    );
 }
 
 void Icon::addToKit()
