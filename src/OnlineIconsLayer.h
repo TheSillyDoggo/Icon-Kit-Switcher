@@ -150,11 +150,17 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
         LoadingCircle* circle = nullptr;
         ScrollLayer* scroll = nullptr;
 
+        CCLabelBMFont* pageCount = nullptr;
         CCLabelBMFont* error2 = nullptr;
+
+        CCMenuItemSpriteExtra* leftBtn = nullptr;
+        CCMenuItemSpriteExtra* rightBtn = nullptr;
 
         static inline bool hasGottenIcons = false;
         static inline std::string iconCode = "";
         static inline std::vector<Icon*> icons = {};
+
+        int curPage = 0;
 
         virtual void keyBackClicked()
         {
@@ -186,7 +192,10 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
 
             content->removeAllChildren();
 
-            for (size_t i = 0; i < icons.size(); i++)
+            int v = 0;
+            bool isLast = true;
+
+            for (size_t i = 75 * curPage; i < icons.size(); i++)
             {
                 auto name = searchBar->getString();
                 bool s = false;
@@ -219,9 +228,17 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
 
                 if (s)
                 {
+                    if (v > 75)
+                    {
+                        isLast = false;
+
+                        break;
+                    }
+
                     auto cell = OnlineIconCell::create(icons[i], i);
 
                     content->addChild(cell);
+                    v++;
                 }
             }
             
@@ -244,6 +261,10 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
 			}
 
             scroll->moveToTop();
+            pageCount->setString((std::string("Page ") + numToString<int>(curPage + 1) + std::string(" (showing 75 out of ") + numToString<int>(icons.size()) + std::string(" icons)")).c_str());
+
+            leftBtn->setVisible(curPage != 0);
+            rightBtn->setVisible(!isLast);
         }
 
         void onRefresh(CCObject*)
@@ -285,6 +306,20 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
         void onDev(CCObject*)
         {
             SetSecretLayer::addToScene();
+        }
+        
+        void onLeft(CCObject*)
+        {
+            curPage--;
+
+            refreshIcons();
+        }
+
+        void onRight(CCObject*)
+        {
+            curPage++;
+
+            refreshIcons();
         }
 
         virtual void textChanged(CCTextInputNode* p0)
@@ -338,6 +373,21 @@ class OnlineIconsLayer : public CCLayerColor, TextInputDelegate
             auto m = CCMenu::create();
             m->setContentSize(ccp(0, 0));
             l->addChildAtPosition(m, Anchor::BottomLeft, ccp(-1, 0) * l->getPosition() + ccp(l->getContentSize().width / 2, -1 * (CCDirector::get()->getWinSize().height / 2 - l->getContentSize().height / 2)));
+
+            pageCount = CCLabelBMFont::create("", "goldFont.fnt");
+            pageCount->setScale(0.45f);
+            pageCount->setAnchorPoint(ccp(1, 1));
+            m->addChildAtPosition(pageCount, Anchor::BottomLeft, CCDirector::get()->getWinSize() + ccp(-3, -3));
+
+            leftBtn = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png"), this, menu_selector(OnlineIconsLayer::onLeft));
+            leftBtn->setVisible(false);
+            m->addChildAtPosition(leftBtn, Anchor::BottomLeft, ccp(15, CCDirector::get()->getWinSize().height / 2));
+
+            auto rightSpr = CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png");
+            rightSpr->setFlipX(true);
+            rightBtn = CCMenuItemSpriteExtra::create(rightSpr, this, menu_selector(OnlineIconsLayer::onRight));
+            rightBtn->setVisible(false);
+            m->addChildAtPosition(rightBtn, Anchor::BottomLeft, ccp(CCDirector::get()->getWinSize().width - 15, CCDirector::get()->getWinSize().height / 2));
 
             auto back = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("GJ_arrow_03_001.png"), this, menu_selector(OnlineIconsLayer::onClose));
             m->addChildAtPosition(back, Anchor::BottomLeft, ccp(24, CCDirector::get()->getWinSize().height - 23));

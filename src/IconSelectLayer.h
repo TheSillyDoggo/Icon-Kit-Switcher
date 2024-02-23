@@ -508,7 +508,8 @@ void IconCell::onShare(CCObject* sender)
                 circle->setFade(true);
                 circle->show();
 
-                auto url = fmt::format("https://www.uproxide.xyz/api/v1/iconkit/addNewKit.php?AccountID={}&Cube={}&Ship={}&Ball={}&Bird={}&Dart={}&Robot={}&Spider={}&Swing={}&Jetpack={}&GlowEnabled={}&GlowColor={}&PrimaryColor={}&SecondaryColor={}&KitName=\"{}\"&Uploader={}", GJAccountManager::get()->m_accountID, icon->cube, icon->ship, icon->ball, icon->ufo, icon->wave, icon->robot, icon->spider, icon->swing, icon->jetpack, icon->glow ? 1 : 0, icon->colour3, icon->colour1, icon->colour2, icon->name, GJAccountManager::get()->m_username);
+                auto url = fmt::format("https://www.uproxide.xyz/api/v1/iconkit/addNewKit.php?AccountID={}&Cube={}&Ship={}&Ball={}&Bird={}&Dart={}&Robot={}&Spider={}&Swing={}&Jetpack={}&GlowEnabled={}&GlowColor={}&PrimaryColor={}&SecondaryColor={}&KitName={}&Uploader={}", GJAccountManager::get()->m_accountID, icon->cube, icon->ship, icon->ball, icon->ufo, icon->wave, icon->robot, icon->spider, icon->swing, icon->jetpack, icon->glow ? 1 : 0, icon->colour3, icon->colour1, icon->colour2, icon->name, GJAccountManager::get()->m_username);
+                url = geode::utils::string::replace(url, " ", "%20");
 
                 web::AsyncWebRequest()
                 .post(url)
