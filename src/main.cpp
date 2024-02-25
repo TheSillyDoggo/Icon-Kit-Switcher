@@ -40,6 +40,8 @@ class $modify(GJGarageLayerExt, GJGarageLayer) {
 
 class $modify (ProfilePageEXt, ProfilePage)
 {
+	bool hasLoaded = false;
+
 	void onSteal(CCObject*)
 	{
 		auto icn = Icon::createIconFromScore(m_score);
@@ -61,13 +63,18 @@ class $modify (ProfilePageEXt, ProfilePage)
 
 		if (auto menu = as<CCNode*>(this->getChildren()->objectAtIndex(0))->getChildByID("left-menu"))
 		{
-			auto btnSpr = CCSprite::createWithSpriteFrameName("GJ_copyBtn_001.png");
-			btnSpr->setScale(0.7f);
+			if (!m_fields->hasLoaded)
+			{
+				m_fields->hasLoaded = true;
+				
+				auto btnSpr = CCSprite::createWithSpriteFrameName("GJ_copyBtn_001.png");
+				btnSpr->setScale(0.7f);
 
-			auto btn = CCMenuItemSpriteExtra::create(btnSpr, this, menu_selector(ProfilePageEXt::onSteal));
-			btn->setID("steal-btn"_spr);
-			menu->addChild(btn);
-			menu->updateLayout();
+				auto btn = CCMenuItemSpriteExtra::create(btnSpr, this, menu_selector(ProfilePageEXt::onSteal));
+				btn->setID("steal-btn"_spr);
+				menu->addChild(btn);
+				menu->updateLayout();
+			}
 		}
 	}
 };
