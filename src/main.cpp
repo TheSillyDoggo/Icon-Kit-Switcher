@@ -20,7 +20,6 @@ class $modify(GJGarageLayerExt, GJGarageLayer) {
 		auto menu = this->getChildByID("shards-menu");
 
 		auto plr = SimplePlayer::create(8);
-
 		plr->setColor(GameManager::get()->colorForIdx(GameManager::get()->m_playerColor));
 		plr->setSecondColor(GameManager::get()->colorForIdx(GameManager::get()->m_playerColor2));
 		if (GameManager::get()->m_playerGlow)
@@ -29,11 +28,12 @@ class $modify(GJGarageLayerExt, GJGarageLayer) {
 		auto btnSpr = CircleButtonSprite::create(plr, CircleBaseColor::Gray);
 		btnSpr->setRotation(45.0f / 2.0f);
 		btnSpr->setScale(0.85f);
+		plr->setScale(1.0f);
 
 		auto btn = CCMenuItemSpriteExtra::create(btnSpr, this, menu_selector(GJGarageLayerExt::onIconSave));
+		btn->setID("icon-save-button"_spr);
 		menu->addChild(btn);
 		menu->updateLayout();
-
 		return true;
 	}
 };
