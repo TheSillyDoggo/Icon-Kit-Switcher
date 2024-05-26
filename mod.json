@@ -1,11 +1,11 @@
 {
-	"geode": "2.0.0",
+	"geode": "2.0.0-beta.27",
 	"gd": {
 		"win": "2.204",
         "mac": "2.200",
 		"android": "*"
 	},
-	"version": "v1.0.3",
+	"version": "v1.0.4",
 	"id": "thesillydoggo.icon_kit_switcher",
 	"name": "Icon Save 2.2",
 	"developers": [ "TheSillyDoggo", "Uproxide"],
