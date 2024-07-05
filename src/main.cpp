@@ -5,12 +5,12 @@
 
 using namespace geode::prelude;
 
-#include "IconSelectLayer.h"
+#include "layers/IconSelectLayer.hpp"
 
 class $modify(GJGarageLayerExt, GJGarageLayer) {
 
 	void onIconSave(CCObject*) {
-		CCScene::get()->addChild(IconSelectLayer::create(), CCScene::get()->getHighestChildZ() + 1);
+		IconSelectLayer::create("Icon Kits")->show();
 	}
 
 	bool init() {
@@ -19,18 +19,7 @@ class $modify(GJGarageLayerExt, GJGarageLayer) {
 
 		auto menu = this->getChildByID("shards-menu");
 
-		auto plr = SimplePlayer::create(8);
-
-		plr->setColor(GameManager::get()->colorForIdx(GameManager::get()->m_playerColor));
-		plr->setSecondColor(GameManager::get()->colorForIdx(GameManager::get()->m_playerColor2));
-		if (GameManager::get()->m_playerGlow)
-			plr->setGlowOutline(GameManager::get()->colorForIdx(GameManager::get()->m_playerGlowColor));
-
-		auto btnSpr = CircleButtonSprite::create(plr, CircleBaseColor::Gray);
-		btnSpr->setRotation(45.0f / 2.0f);
-		btnSpr->setScale(0.85f);
-
-		auto btn = CCMenuItemSpriteExtra::create(btnSpr, this, menu_selector(GJGarageLayerExt::onIconSave));
+		auto btn = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_folderBtn_001.png"), this, menu_selector(GJGarageLayerExt::onIconSave));
 		menu->addChild(btn);
 		menu->updateLayout();
 
@@ -38,9 +27,11 @@ class $modify(GJGarageLayerExt, GJGarageLayer) {
 	}
 };
 
-class $modify (ProfilePageEXt, ProfilePage)
+class $modify (ProfilePageExt, ProfilePage)
 {
-	bool hasLoaded = false;
+	struct Fields {
+		bool hasLoaded = false;
+	};
 
 	void onSteal(CCObject*)
 	{
@@ -70,7 +61,7 @@ class $modify (ProfilePageEXt, ProfilePage)
 				auto btnSpr = CCSprite::createWithSpriteFrameName("GJ_copyBtn_001.png");
 				btnSpr->setScale(0.7f);
 
-				auto btn = CCMenuItemSpriteExtra::create(btnSpr, this, menu_selector(ProfilePageEXt::onSteal));
+				auto btn = CCMenuItemSpriteExtra::create(btnSpr, this, menu_selector(ProfilePageExt::onSteal));
 				btn->setID("steal-btn"_spr);
 				menu->addChild(btn);
 				menu->updateLayout();
