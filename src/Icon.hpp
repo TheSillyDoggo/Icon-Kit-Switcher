@@ -3,7 +3,7 @@
 class Icon {
 public:
     int cube, ship, ball, ufo, wave, robot, spider, swing, colour1, colour2, colour3, trail, jetpack, deathEffect;
-    bool glow, explode; // imma be honest i dont know what explode does
+    bool glow, explode; // explode is the shattering effect hope that helps
     std::string name, uploader;
     bool hasUploaded = false;
     int id = 0;

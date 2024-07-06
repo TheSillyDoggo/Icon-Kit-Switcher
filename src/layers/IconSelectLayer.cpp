@@ -137,7 +137,7 @@ bool IconSelectLayer::setup(std::string const& text) {
     m_mainLayer->addChildAtPosition(menu, Anchor::Center);
 
     auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(IconSelectLayer::onClose));
-    menu->addChildAtPosition(ok, Anchor::Bottom, ccp(0, 22.5f));
+    menu->addChildAtPosition(ok, Anchor::Bottom, ccp(0, 45));
 
     auto unextendedIconSpr = CCSprite::create("GJ_button_02.png"); // shamelessly stolen from geode :)
     unextendedIconSpr->setScale(.75f);

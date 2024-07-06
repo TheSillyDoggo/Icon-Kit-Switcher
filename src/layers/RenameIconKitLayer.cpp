@@ -20,7 +20,7 @@ bool RenameIconKitLayer::setup(std::string const& text, Icon* icon) {
     auto menu = CCMenu::create();
 
     auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(RenameIconKitLayer::onClose));
-    menu->addChildAtPosition(ok, Anchor::Center, ccp(0, -63));
+    menu->addChildAtPosition(ok, Anchor::Center, ccp(0, -55));
 
     inp = TextInput::create(260, "Icon Kit Name");
     inp->setString(icon->name);
