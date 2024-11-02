@@ -8,18 +8,21 @@ public:
     bool hasUploaded = false;
     int id = 0;
     int accountID = 0;
+    std::string miCube, miShip, miBall, miUfo, miWave, miRobot, miSpider, miSwing, miTrail, miJetpack, miDeathEffect;
 
     static std::vector<std::string> split(const std::string& input, char delimiter);
 
-    static Icon* createIconFromString(std::string s);
+    static Icon* createIconFromString(const std::string& s);
 
     static Icon* createIconFromCurrent();
 
     static Icon* createIconFromScore(GJUserScore* gm);
 
-    static Icon* createIconFromJson(matjson::Object js);
+    static Icon* createIconFromJson(const matjson::Value& js);
 
     std::string saveToString();
+
+    matjson::Object saveToJson();
 
     void applyIcons();
 

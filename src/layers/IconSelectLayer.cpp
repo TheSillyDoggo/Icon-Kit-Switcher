@@ -21,6 +21,7 @@ void IconSelectLayer::refreshIcons(bool move) {
     for(auto elem : searchBar->getString())
         searchLower += std::tolower(elem);
 
+    matjson::Array arr;
     for (size_t i = 0; i < icons.size(); i++)
     {
         std::string nameLower = "";
@@ -34,14 +35,10 @@ void IconSelectLayer::refreshIcons(bool move) {
             content->addChild(cell);
         }
 
-        ss << icons[i]->saveToString();
-        ss << ";";
+        arr.push_back(icons[i]->saveToJson());
     }
 
-    auto s = ss.str();
-    s = s.substr(0, s.size() - 1);
-
-    Mod::get()->setSavedValue("saved-icons", s);
+    Mod::get()->setSavedValue("saved-icons-v2", arr);
     
     error->setVisible(icons.size() == 0);
 
@@ -126,11 +123,11 @@ bool IconSelectLayer::setup(std::string const& text) {
 
     instance = this;
 
-    auto ic = Icon::split(Mod::get()->getSavedValue<std::string>("saved-icons"), ';');
+    auto ic = Mod::get()->getSavedValue<matjson::Array>("saved-icons-v2");
 
     for (size_t i = 0; i < ic.size(); i++)
     {
-        icons.push_back(Icon::createIconFromString(ic[i]));
+        icons.push_back(Icon::createIconFromJson(ic[i]));
     }            
 
     auto menu = CCMenu::create();

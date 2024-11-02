@@ -1,6 +1,7 @@
 #include "IconCell.hpp"
 #include "layers/RenameIconKitLayer.hpp"
 #include "layers/IconSelectLayer.hpp"
+#include <Geode/loader/Dispatch.hpp>
 
 using namespace geode::prelude;
 
@@ -98,15 +99,15 @@ bool IconCell::init(Icon* icon, int i, bool isLast, bool compactMode) {
     layoutIcons->setContentSize(ccp(6969, 0));
     layoutIcons->setAnchorPoint(ccp(0, 0.5f));
 
-    layoutIcons->addChild(createSprite(icon->cube, 0));
-    layoutIcons->addChild(createSprite(icon->ship, 1));
-    layoutIcons->addChild(createSprite(icon->ball, 2));
-    layoutIcons->addChild(createSprite(icon->ufo, 3));
-    layoutIcons->addChild(createSprite(icon->wave, 4));
-    layoutIcons->addChild(createSprite(icon->robot, 5));
-    layoutIcons->addChild(createSprite(icon->spider, 6));
-    layoutIcons->addChild(createSprite(icon->swing, 7));
-    layoutIcons->addChild(createSprite(icon->jetpack, 8));
+    layoutIcons->addChild(createSprite(icon->cube, icon->miCube, 0));
+    layoutIcons->addChild(createSprite(icon->ship, icon->miShip, 1));
+    layoutIcons->addChild(createSprite(icon->ball, icon->miBall, 2));
+    layoutIcons->addChild(createSprite(icon->ufo, icon->miUfo, 3));
+    layoutIcons->addChild(createSprite(icon->wave, icon->miWave, 4));
+    layoutIcons->addChild(createSprite(icon->robot, icon->miRobot, 5));
+    layoutIcons->addChild(createSprite(icon->spider, icon->miSpider, 6));
+    layoutIcons->addChild(createSprite(icon->swing, icon->miSwing, 7));
+    layoutIcons->addChild(createSprite(icon->jetpack, icon->miJetpack, 8));
 
     layoutIcons->setLayout(RowLayout::create()->setAutoScale(false)->setAxisAlignment(AxisAlignment::Start)->setGap(40));
     layoutIcons->setScale(0.7f);
@@ -163,7 +164,7 @@ bool IconCell::init(Icon* icon, int i, bool isLast, bool compactMode) {
 }
 
 
-SimplePlayer* IconCell::createSprite(int id, int type) {
+SimplePlayer* IconCell::createSprite(int id, const std::string& name, int type) {
     auto plr = SimplePlayer::create(id);
     plr->updatePlayerFrame(id, as<IconType>(type));
 
@@ -174,6 +175,9 @@ SimplePlayer* IconCell::createSprite(int id, int type) {
         plr->setGlowOutline(GameManager::get()->colorForIdx(icon->colour3));
 
     plr->setScale(0.9f);
+
+    if (!name.empty() && Loader::get()->isModLoaded("hiimjustin000.more_icons"))
+        DispatchEvent<SimplePlayer*, std::string, IconType>("hiimjustin000.more_icons/simple-player", plr, name, as<IconType>(type)).post();
 
     return plr;
 }

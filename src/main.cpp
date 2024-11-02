@@ -7,6 +7,22 @@ using namespace geode::prelude;
 
 #include "layers/IconSelectLayer.hpp"
 
+$on_mod(Loaded) {
+	if (!Mod::get()->getSaveContainer().contains("saved-icons-v2"))
+	{
+		auto savedIconsV2 = matjson::Array();
+		auto v = string::split(Mod::get()->getSavedValue<std::string>("saved-icons"), ";");
+
+		for (auto& s : v)
+		{
+			auto icn = Icon::createIconFromString(s);
+			savedIconsV2.push_back(icn->saveToJson());
+		}
+
+		Mod::get()->setSavedValue("saved-icons-v2", savedIconsV2);
+	}
+}
+
 class $modify(GJGarageLayerExt, GJGarageLayer) {
 
 	void onIconSave(CCObject*) {
@@ -36,14 +52,9 @@ class $modify (ProfilePageExt, ProfilePage)
 	void onSteal(CCObject*)
 	{
 		auto icn = Icon::createIconFromScore(m_score);
-
-		std::stringstream ss;
-		ss << Mod::get()->getSavedValue<std::string>("saved-icons");
-		if (ss.str().size() != 0)
-			ss << ";";
-		ss << icn->saveToString();
-
-		Mod::get()->setSavedValue<std::string>("saved-icons", ss.str());
+		auto savedIcons = Mod::get()->getSavedValue<matjson::Array>("saved-icons-v2");
+		savedIcons.push_back(icn->saveToJson());
+		Mod::get()->setSavedValue("saved-icons-v2", savedIcons);
 
 		CCScene::get()->addChild(TextAlertPopup::create("Saved Icon to Icon Kit", 0.5f, 0.6f, 150, ""), 9999999);
 	}
@@ -52,7 +63,7 @@ class $modify (ProfilePageExt, ProfilePage)
 	{
 		ProfilePage::loadPageFromUserInfo(p0);
 
-		if (auto menu = as<CCNode*>(this->getChildren()->objectAtIndex(0))->getChildByID("left-menu"))
+		if (auto menu = m_mainLayer->getChildByID("left-menu"))
 		{
 			if (!m_fields->hasLoaded)
 			{
