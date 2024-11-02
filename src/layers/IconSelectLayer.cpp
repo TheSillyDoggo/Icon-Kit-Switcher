@@ -17,18 +17,12 @@ void IconSelectLayer::refreshIcons(bool move) {
 
     std::stringstream ss;
 
-    std::string searchLower = "";
-    for(auto elem : searchBar->getString())
-        searchLower += std::tolower(elem);
+    std::string searchLower = string::toLower(searchBar->getString());
 
     matjson::Array arr;
     for (size_t i = 0; i < icons.size(); i++)
     {
-        std::string nameLower = "";
-        for(auto elem : icons[i]->name)
-            nameLower += std::tolower(elem);
-
-        if (nameLower.find(searchLower) != std::string::npos)
+        if (string::toLower(icons[i]->name).find(searchLower) != std::string::npos)
         {
             auto cell = IconCell::create(icons[i], i, i == (icons.size() - 1), true);
 
@@ -91,18 +85,15 @@ void IconSelectLayer::textChanged(CCTextInputNode* p0) {
 
         bool res = false;
 
-        std::string searchLower = "";
-        for(auto elem : searchBar->getString())
-            searchLower += std::tolower(elem);
+        std::string searchLower = string::toLower(searchBar->getString());
 
         for (size_t i = 0; i < icons.size(); i++)
         {
-            std::string nameLower = "";
-            for(auto elem : icons[i]->name)
-                nameLower += std::tolower(elem);
-
-            if (nameLower.find(searchLower) != std::string::npos)
+            if (string::toLower(icons[i]->name).find(searchLower) != std::string::npos)
+            {
                 res = true;
+                break;
+            }
         }
 
         error2->setVisible(!res);
