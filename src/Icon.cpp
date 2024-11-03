@@ -116,36 +116,40 @@ Icon* Icon::createIconFromScore(GJUserScore* gm) {
     return icn;
 }
 
+#define INT_DEFAULT(obj, prop, def) obj.contains(prop) && obj[prop].is_number() ? obj[prop].as_int() : def
+#define STRING_DEFAULT(obj, prop, def) obj.contains(prop) && obj[prop].is_string() ? obj[prop].as_string() : def
+#define BOOL_DEFAULT(obj, prop, def) obj.contains(prop) && obj[prop].is_bool() ? obj[prop].as_bool() : def
+
 Icon* Icon::createIconFromJson(const matjson::Value& js) {
     auto icn = new Icon();
 
-    icn->cube = js.contains("playerCube") && js["playerCube"].is_number() ? js["playerCube"].as_int() : 1;
-    icn->miCube = js.contains("moreIconsCube") && js["moreIconsCube"].is_string() ? js["moreIconsCube"].as_string() : "";
-    icn->ship = js.contains("playerShip") && js["playerShip"].is_number() ? js["playerShip"].as_int() : 1;
-    icn->miShip = js.contains("moreIconsShip") && js["moreIconsShip"].is_string() ? js["moreIconsShip"].as_string() : "";
-    icn->ball = js.contains("playerBall") && js["playerBall"].is_number() ? js["playerBall"].as_int() : 1;
-    icn->miBall = js.contains("moreIconsBall") && js["moreIconsBall"].is_string() ? js["moreIconsBall"].as_string() : "";
-    icn->ufo = js.contains("playerBird") && js["playerBird"].is_number() ? js["playerBird"].as_int() : 1;
-    icn->miUfo = js.contains("moreIconsBird") && js["moreIconsBird"].is_string() ? js["moreIconsBird"].as_string() : "";
-    icn->wave = js.contains("playerDart") && js["playerDart"].is_number() ? js["playerDart"].as_int() : 1;
-    icn->miWave = js.contains("moreIconsDart") && js["moreIconsDart"].is_string() ? js["moreIconsDart"].as_string() : "";
-    icn->robot = js.contains("playerRobot") && js["playerRobot"].is_number() ? js["playerRobot"].as_int() : 1;
-    icn->miRobot = js.contains("moreIconsRobot") && js["moreIconsRobot"].is_string() ? js["moreIconsRobot"].as_string() : "";
-    icn->spider = js.contains("playerSpider") && js["playerSpider"].is_number() ? js["playerSpider"].as_int() : 1;
-    icn->miSpider = js.contains("moreIconsSpider") && js["moreIconsSpider"].is_string() ? js["moreIconsSpider"].as_string() : "";
-    icn->swing = js.contains("playerSwing") && js["playerSwing"].is_number() ? js["playerSwing"].as_int() : 1;
-    icn->miSwing = js.contains("moreIconsSwing") && js["moreIconsSwing"].is_string() ? js["moreIconsSwing"].as_string() : "";
-    icn->jetpack = js.contains("playerJetpack") && js["playerJetpack"].is_number() ? js["playerJetpack"].as_int() : 1;
-    icn->miJetpack = js.contains("moreIconsJetpack") && js["moreIconsJetpack"].is_string() ? js["moreIconsJetpack"].as_string() : "";
-    icn->trail = js.contains("playerStreak") && js["playerStreak"].is_number() ? js["playerStreak"].as_int() : 1;
-    icn->miTrail = js.contains("moreIconsStreak") && js["moreIconsStreak"].is_string() ? js["moreIconsStreak"].as_string() : "";
-    icn->deathEffect = js.contains("playerExplosion") && js["playerExplosion"].is_number() ? js["playerExplosion"].as_int() : 1;
-    icn->miDeathEffect = js.contains("moreIconsExplosion") && js["moreIconsExplosion"].is_string() ? js["moreIconsExplosion"].as_string() : "";
-    icn->glow = js.contains("glowEnabled") && js["glowEnabled"].is_bool() ? js["glowEnabled"].as_bool() : false;
-    icn->colour1 = js.contains("primaryColor") && js["primaryColor"].is_number() ? js["primaryColor"].as_int() : 0;
-    icn->colour2 = js.contains("secondaryColor") && js["secondaryColor"].is_number() ? js["secondaryColor"].as_int() : 0;
-    icn->colour3 = js.contains("glowColor") && js["glowColor"].is_number() ? js["glowColor"].as_int() : 0;
-    icn->name = js.contains("kitName") && js["kitName"].is_string() ? js["kitName"].as_string() : "Unnamed Kit";
+    icn->cube = INT_DEFAULT(js, "playerCube", 1);
+    icn->miCube = STRING_DEFAULT(js, "moreIconsCube", "");
+    icn->ship = INT_DEFAULT(js, "playerShip", 1);
+    icn->miShip = STRING_DEFAULT(js, "moreIconsShip", "");
+    icn->ball = INT_DEFAULT(js, "playerBall", 1);
+    icn->miBall = STRING_DEFAULT(js, "moreIconsBall", "");
+    icn->ufo = INT_DEFAULT(js, "playerBird", 1);
+    icn->miUfo = STRING_DEFAULT(js, "moreIconsBird", "");
+    icn->wave = INT_DEFAULT(js, "playerDart", 1);
+    icn->miWave = STRING_DEFAULT(js, "moreIconsDart", "");
+    icn->robot = INT_DEFAULT(js, "playerRobot", 1);
+    icn->miRobot = STRING_DEFAULT(js, "moreIconsRobot", "");
+    icn->spider = INT_DEFAULT(js, "playerSpider", 1);
+    icn->miSpider = STRING_DEFAULT(js, "moreIconsSpider", "");
+    icn->swing = INT_DEFAULT(js, "playerSwing", 1);
+    icn->miSwing = STRING_DEFAULT(js, "moreIconsSwing", "");
+    icn->jetpack = INT_DEFAULT(js, "playerJetpack", 1);
+    icn->miJetpack = STRING_DEFAULT(js, "moreIconsJetpack", "");
+    icn->trail = INT_DEFAULT(js, "playerStreak", 1);
+    icn->miTrail = STRING_DEFAULT(js, "moreIconsStreak", "");
+    icn->deathEffect = INT_DEFAULT(js, "playerExplosion", 1);
+    icn->miDeathEffect = STRING_DEFAULT(js, "moreIconsExplosion", "");
+    icn->glow = BOOL_DEFAULT(js, "glowEnabled", false);
+    icn->colour1 = INT_DEFAULT(js, "primaryColor", 0);
+    icn->colour2 = INT_DEFAULT(js, "secondaryColor", 0);
+    icn->colour3 = INT_DEFAULT(js, "glowColor", 0);
+    icn->name = STRING_DEFAULT(js, "kitName", "Unnamed Kit");
 
     if (icn->name.starts_with('"'))
         icn->name = icn->name.substr(1);
