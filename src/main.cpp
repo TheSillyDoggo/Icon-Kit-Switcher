@@ -10,7 +10,7 @@ using namespace geode::prelude;
 $on_mod(Loaded) {
 	if (!Mod::get()->getSaveContainer().contains("saved-icons-v2"))
 	{
-		auto savedIconsV2 = matjson::Array();
+		std::vector<matjson::Value> savedIconsV2;
 		auto v = string::split(Mod::get()->getSavedValue<std::string>("saved-icons"), ";");
 
 		for (auto& s : v)
@@ -52,7 +52,7 @@ class $modify (ProfilePageExt, ProfilePage)
 	void onSteal(CCObject*)
 	{
 		auto icn = Icon::createIconFromScore(m_score);
-		auto savedIcons = Mod::get()->getSavedValue<matjson::Array>("saved-icons-v2");
+		auto savedIcons = Mod::get()->getSavedValue<std::vector<matjson::Value>>("saved-icons-v2");
 		savedIcons.push_back(icn->saveToJson());
 		Mod::get()->setSavedValue("saved-icons-v2", savedIcons);
 

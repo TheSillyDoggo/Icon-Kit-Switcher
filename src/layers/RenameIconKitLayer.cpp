@@ -18,6 +18,7 @@ bool RenameIconKitLayer::setup(std::string const& text, Icon* icon) {
     setTitle(text);
 
     auto menu = CCMenu::create();
+    menu->setPosition(ccp(170, 85));
 
     auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(RenameIconKitLayer::onClose));
     menu->addChildAtPosition(ok, Anchor::Center, ccp(0, -55));
@@ -33,7 +34,7 @@ bool RenameIconKitLayer::setup(std::string const& text, Icon* icon) {
 
 RenameIconKitLayer* RenameIconKitLayer::create(std::string const& text, Icon *icon) {
     RenameIconKitLayer* pRet = new RenameIconKitLayer();
-    if (pRet->init(340.f, 170.f, text, icon)) {
+    if (pRet->initAnchored(340.f, 170.f, text, icon)) {
         pRet->autorelease();
         return pRet;
     }

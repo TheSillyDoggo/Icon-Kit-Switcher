@@ -116,40 +116,36 @@ Icon* Icon::createIconFromScore(GJUserScore* gm) {
     return icn;
 }
 
-#define INT_DEFAULT(obj, prop, def) obj.contains(prop) && obj[prop].is_number() ? obj[prop].as_int() : def
-#define STRING_DEFAULT(obj, prop, def) obj.contains(prop) && obj[prop].is_string() ? obj[prop].as_string() : def
-#define BOOL_DEFAULT(obj, prop, def) obj.contains(prop) && obj[prop].is_bool() ? obj[prop].as_bool() : def
-
 Icon* Icon::createIconFromJson(const matjson::Value& js) {
     auto icn = new Icon();
 
-    icn->cube = INT_DEFAULT(js, "playerCube", 1);
-    icn->miCube = STRING_DEFAULT(js, "moreIconsCube", "");
-    icn->ship = INT_DEFAULT(js, "playerShip", 1);
-    icn->miShip = STRING_DEFAULT(js, "moreIconsShip", "");
-    icn->ball = INT_DEFAULT(js, "playerBall", 1);
-    icn->miBall = STRING_DEFAULT(js, "moreIconsBall", "");
-    icn->ufo = INT_DEFAULT(js, "playerBird", 1);
-    icn->miUfo = STRING_DEFAULT(js, "moreIconsBird", "");
-    icn->wave = INT_DEFAULT(js, "playerDart", 1);
-    icn->miWave = STRING_DEFAULT(js, "moreIconsDart", "");
-    icn->robot = INT_DEFAULT(js, "playerRobot", 1);
-    icn->miRobot = STRING_DEFAULT(js, "moreIconsRobot", "");
-    icn->spider = INT_DEFAULT(js, "playerSpider", 1);
-    icn->miSpider = STRING_DEFAULT(js, "moreIconsSpider", "");
-    icn->swing = INT_DEFAULT(js, "playerSwing", 1);
-    icn->miSwing = STRING_DEFAULT(js, "moreIconsSwing", "");
-    icn->jetpack = INT_DEFAULT(js, "playerJetpack", 1);
-    icn->miJetpack = STRING_DEFAULT(js, "moreIconsJetpack", "");
-    icn->trail = INT_DEFAULT(js, "playerStreak", 1);
-    icn->miTrail = STRING_DEFAULT(js, "moreIconsStreak", "");
-    icn->deathEffect = INT_DEFAULT(js, "playerExplosion", 1);
-    icn->miDeathEffect = STRING_DEFAULT(js, "moreIconsExplosion", "");
-    icn->glow = BOOL_DEFAULT(js, "glowEnabled", false);
-    icn->colour1 = INT_DEFAULT(js, "primaryColor", 0);
-    icn->colour2 = INT_DEFAULT(js, "secondaryColor", 0);
-    icn->colour3 = INT_DEFAULT(js, "glowColor", 0);
-    icn->name = STRING_DEFAULT(js, "kitName", "Unnamed Kit");
+    icn->cube = (int)js["playerCube"].asInt().unwrapOr(1);
+    icn->miCube = js["moreIconsCube"].asString().unwrapOr("");
+    icn->ship = (int)js["playerShip"].asInt().unwrapOr(1);
+    icn->miShip = js["moreIconsShip"].asString().unwrapOr("");
+    icn->ball = (int)js["playerBall"].asInt().unwrapOr(1);
+    icn->miBall = js["moreIconsBall"].asString().unwrapOr("");
+    icn->ufo = (int)js["playerBird"].asInt().unwrapOr(1);
+    icn->miUfo = js["moreIconsBird"].asString().unwrapOr("");
+    icn->wave = (int)js["playerDart"].asInt().unwrapOr(1);
+    icn->miWave = js["moreIconsDart"].asString().unwrapOr("");
+    icn->robot = (int)js["playerRobot"].asInt().unwrapOr(1);
+    icn->miRobot = js["moreIconsRobot"].asString().unwrapOr("");
+    icn->spider = (int)js["playerSpider"].asInt().unwrapOr(1);
+    icn->miSpider = js["moreIconsSpider"].asString().unwrapOr("");
+    icn->swing = (int)js["playerSwing"].asInt().unwrapOr(1);
+    icn->miSwing = js["moreIconsSwing"].asString().unwrapOr("");
+    icn->jetpack = (int)js["playerJetpack"].asInt().unwrapOr(1);
+    icn->miJetpack = js["moreIconsJetpack"].asString().unwrapOr("");
+    icn->trail = (int)js["playerStreak"].asInt().unwrapOr(1);
+    icn->miTrail = js["moreIconsStreak"].asString().unwrapOr("");
+    icn->deathEffect = (int)js["playerExplosion"].asInt().unwrapOr(1);
+    icn->miDeathEffect = js["moreIconsExplosion"].asString().unwrapOr("");
+    icn->glow = js["glowEnabled"].asBool().unwrapOr(false);
+    icn->colour1 = (int)js["primaryColor"].asInt().unwrapOr(0);
+    icn->colour2 = (int)js["secondaryColor"].asInt().unwrapOr(0);
+    icn->colour3 = (int)js["glowColor"].asInt().unwrapOr(0);
+    icn->name = js["kitName"].asString().unwrapOr("Unnamed Kit");
 
     if (icn->name.starts_with('"'))
         icn->name = icn->name.substr(1);
@@ -198,8 +194,8 @@ std::string Icon::saveToString() {
     return ss.str();
 }
 
-matjson::Object Icon::saveToJson() {
-    matjson::Object js;
+matjson::Value Icon::saveToJson() {
+    matjson::Value js;
 
     js["playerCube"] = cube;
     js["moreIconsCube"] = miCube;

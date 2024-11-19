@@ -22,7 +22,7 @@ public:
 
     std::string saveToString();
 
-    matjson::Object saveToJson();
+    matjson::Value saveToJson();
 
     void applyIcons();
 

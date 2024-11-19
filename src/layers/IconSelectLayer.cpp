@@ -1,6 +1,5 @@
 #include "IconSelectLayer.hpp"
 #include "../IconCell.hpp"
-#include "RenameIconKitLayer.hpp"
 
 using namespace geode::prelude;
 
@@ -19,7 +18,7 @@ void IconSelectLayer::refreshIcons(bool move) {
 
     std::string searchLower = string::toLower(searchBar->getString());
 
-    matjson::Array arr;
+    std::vector<matjson::Value> arr;
     for (size_t i = 0; i < icons.size(); i++)
     {
         if (string::toLower(icons[i]->name).find(searchLower) != std::string::npos)
@@ -114,7 +113,7 @@ bool IconSelectLayer::setup(std::string const& text) {
 
     instance = this;
 
-    auto ic = Mod::get()->getSavedValue<matjson::Array>("saved-icons-v2");
+    auto ic = Mod::get()->getSavedValue<std::vector<matjson::Value>>("saved-icons-v2");
 
     for (size_t i = 0; i < ic.size(); i++)
     {
