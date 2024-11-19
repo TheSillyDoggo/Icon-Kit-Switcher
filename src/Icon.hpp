@@ -17,7 +17,7 @@ public:
 
     static Icon* createIconFromScore(GJUserScore* gm);
 
-    static Icon* createIconFromJson(matjson::Object js);
+    static Icon* createIconFromJson(matjson::Value js);
 
     std::string saveToString();
 
