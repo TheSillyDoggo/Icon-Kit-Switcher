@@ -5,7 +5,7 @@
 
 #include "../Icon.hpp"
 
-class RenameIconKitLayer : public geode::Popup<std::string const&, Icon*> {
+class RenameIconKitLayer : public geode::Popup<std::string, Icon*> {
     public:
         Icon* icon = nullptr;
         geode::TextInput* inp = nullptr;
@@ -14,9 +14,9 @@ class RenameIconKitLayer : public geode::Popup<std::string const&, Icon*> {
 
         void onClose(cocos2d::CCObject*);
 
-        bool setup(std::string const& text, Icon* icon);
+        bool setup(std::string text, Icon* icon);
 
-        static RenameIconKitLayer* create(std::string const& text, Icon* icon);
+        static RenameIconKitLayer* create(std::string text, Icon* icon);
 
         static void addToScene(Icon* icon);
 };

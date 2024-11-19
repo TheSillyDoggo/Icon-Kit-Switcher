@@ -12,28 +12,32 @@ void RenameIconKitLayer::onClose(CCObject*) {
 
 }
 
-bool RenameIconKitLayer::setup(std::string const& text, Icon* icon) {
+bool RenameIconKitLayer::setup(std::string text, Icon* icon) {
     this->icon = icon;
 
     setTitle(text);
 
     auto menu = CCMenu::create();
 
-    auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(RenameIconKitLayer::onClose));
-    menu->addChildAtPosition(ok, Anchor::Center, ccp(0, -55));
-
     inp = TextInput::create(260, "Icon Kit Name");
     inp->setString(icon->name);
-    menu->addChildAtPosition(inp, Anchor::Center);
+    menu->addChild(inp);
+    inp->setPosition(m_mainLayer->getContentSize() / 2);
+
+    auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(RenameIconKitLayer::onClose));
+    menu->addChild(ok);
+    ok->setPosition(inp->getPosition());
+    ok->setPositionY(ok->getPositionY() - 55);
 
     m_mainLayer->addChild(menu);
+    menu->setPosition(0, 0);
 
     return true;
 }
 
-RenameIconKitLayer* RenameIconKitLayer::create(std::string const& text, Icon *icon) {
+RenameIconKitLayer* RenameIconKitLayer::create(std::string text, Icon *icon) {
     RenameIconKitLayer* pRet = new RenameIconKitLayer();
-    if (pRet->init(340.f, 170.f, text, icon)) {
+    if (pRet->initAnchored(340, 170, text, icon)) {
         pRet->autorelease();
         return pRet;
     }

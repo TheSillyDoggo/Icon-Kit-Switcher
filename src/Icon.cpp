@@ -101,27 +101,27 @@ Icon* Icon::createIconFromScore(GJUserScore* gm) {
     return icn;
 }
 
-Icon* Icon::createIconFromJson(matjson::Object js) {
+Icon* Icon::createIconFromJson(matjson::Value js) {
     auto icn = new Icon();
 
-    icn->id = js["uploadID"].as_int();
-    icn->accountID = js["accountID"].as_int();
+    icn->id = js["uploadID"].asInt().unwrap();
+    icn->accountID = js["accountID"].asInt().unwrap();
 
-    icn->cube = js["playerCube"].as_int();
-    icn->ship = js["playerShip"].as_int();
-    icn->ball = js["playerBall"].as_int();
-    icn->ufo = js["playerBird"].as_int();
-    icn->wave = js["playerDart"].as_int();
-    icn->robot = js["playerRobot"].as_int();
-    icn->spider = js["playerSpider"].as_int();
-    icn->swing = js["playerSwing"].as_int();
-    icn->jetpack = js["playerJetpack"].as_int();
-    icn->glow = (js["glowEnabled"].as_int() == 1 ? true : false);
-    icn->colour1 = js["primaryColor"].as_int();
-    icn->colour2 = js["secondaryColor"].as_int();
-    icn->colour3 = js["glowColor"].as_int();
-    icn->name = js["kitName"].as_string();
-    icn->uploader = js["uploaderName"].as_string();
+    icn->cube = js["playerCube"].asInt().unwrap();
+    icn->ship = js["playerShip"].asInt().unwrap();
+    icn->ball = js["playerBall"].asInt().unwrap();
+    icn->ufo = js["playerBird"].asInt().unwrap();
+    icn->wave = js["playerDart"].asInt().unwrap();
+    icn->robot = js["playerRobot"].asInt().unwrap();
+    icn->spider = js["playerSpider"].asInt().unwrap();
+    icn->swing = js["playerSwing"].asInt().unwrap();
+    icn->jetpack = js["playerJetpack"].asInt().unwrap();
+    icn->glow = (js["glowEnabled"].asInt().unwrap() == 1 ? true : false);
+    icn->colour1 = js["primaryColor"].asInt().unwrap();
+    icn->colour2 = js["secondaryColor"].asInt().unwrap();
+    icn->colour3 = js["glowColor"].asInt().unwrap();
+    icn->name = js["kitName"].asString().unwrap();
+    icn->uploader = js["uploaderName"].asString().unwrap();
 
     if (icn->name.starts_with('"'))
         icn->name = icn->name.substr(1);
