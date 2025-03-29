@@ -60,36 +60,38 @@ Icon* Icon::createIconFromCurrent() {
 
     auto gm = GameManager::get();
 
-    icn->cube = gm->m_playerFrame;
-    icn->ship = gm->m_playerShip;
-    icn->ball = gm->m_playerBall;
-    icn->ufo = gm->m_playerBird;
-    icn->wave = gm->m_playerDart;
-    icn->robot = gm->m_playerRobot;
-    icn->spider = gm->m_playerSpider;
-    icn->swing = gm->m_playerSwing;
-    icn->jetpack = gm->m_playerJetpack;
-    icn->colour1 = gm->m_playerColor;
-    icn->colour2 = gm->m_playerColor2;
-    icn->colour3 = gm->m_playerGlowColor;
-    icn->glow = gm->m_playerGlow;
-    icn->trail = gm->m_playerStreak;
-    icn->deathEffect = gm->m_playerDeathEffect;
+    auto separateDualIcons = geode::Loader::get()->getLoadedMod("weebify.separate_dual_icons");
+    auto dualSelected = separateDualIcons && separateDualIcons->getSavedValue("2pselected", false);
+    icn->cube = dualSelected ? separateDualIcons->getSavedValue("cube", 1) : gm->m_playerFrame;
+    icn->ship = dualSelected ? separateDualIcons->getSavedValue("ship", 1) : gm->m_playerShip;
+    icn->ball = dualSelected ? separateDualIcons->getSavedValue("roll", 1) : gm->m_playerBall;
+    icn->ufo = dualSelected ? separateDualIcons->getSavedValue("bird", 1) : gm->m_playerBird;
+    icn->wave = dualSelected ? separateDualIcons->getSavedValue("dart", 1) : gm->m_playerDart;
+    icn->robot = dualSelected ? separateDualIcons->getSavedValue("robot", 1) : gm->m_playerRobot;
+    icn->spider = dualSelected ? separateDualIcons->getSavedValue("spider", 1) : gm->m_playerSpider;
+    icn->swing = dualSelected ? separateDualIcons->getSavedValue("swing", 1) : gm->m_playerSwing;
+    icn->jetpack = dualSelected ? separateDualIcons->getSavedValue("jetpack", 1) : gm->m_playerJetpack;
+    icn->colour1 = dualSelected ? separateDualIcons->getSavedValue("color1", 0) : gm->m_playerColor;
+    icn->colour2 = dualSelected ? separateDualIcons->getSavedValue("color2", 0) : gm->m_playerColor2;
+    icn->colour3 = dualSelected ? separateDualIcons->getSavedValue("colorglow", 0) : gm->m_playerGlowColor;
+    icn->glow = dualSelected ? separateDualIcons->getSavedValue("glow", false) : gm->m_playerGlow;
+    icn->trail = dualSelected ? separateDualIcons->getSavedValue("trail", 1) : gm->m_playerStreak;
+    icn->deathEffect = dualSelected ? separateDualIcons->getSavedValue("death", 1) : gm->m_playerDeathEffect;
     icn->name = "Unnamed Kit";
     //icn->explode = gm->m_
 
     if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
-        icn->miCube = moreIcons->getSavedValue<std::string>("icon");
-        icn->miShip = moreIcons->getSavedValue<std::string>("ship");
-        icn->miBall = moreIcons->getSavedValue<std::string>("ball");
-        icn->miUfo = moreIcons->getSavedValue<std::string>("ufo");
-        icn->miWave = moreIcons->getSavedValue<std::string>("wave");
-        icn->miRobot = moreIcons->getSavedValue<std::string>("robot");
-        icn->miSpider = moreIcons->getSavedValue<std::string>("spider");
-        icn->miSwing = moreIcons->getSavedValue<std::string>("swing");
-        icn->miJetpack = moreIcons->getSavedValue<std::string>("jetpack");
-        icn->miTrail = moreIcons->getSavedValue<std::string>("trail");
-        icn->miDeathEffect = moreIcons->getSavedValue<std::string>("death");
+        icn->miCube = moreIcons->getSavedValue<std::string>(dualSelected ? "icon-dual" : "icon");
+        icn->miShip = moreIcons->getSavedValue<std::string>(dualSelected ? "ship-dual" : "ship");
+        icn->miBall = moreIcons->getSavedValue<std::string>(dualSelected ? "ball-dual" : "ball");
+        icn->miUfo = moreIcons->getSavedValue<std::string>(dualSelected ? "ufo-dual" : "ufo");
+        icn->miWave = moreIcons->getSavedValue<std::string>(dualSelected ? "wave-dual" : "wave");
+        icn->miRobot = moreIcons->getSavedValue<std::string>(dualSelected ? "robot-dual" : "robot");
+        icn->miSpider = moreIcons->getSavedValue<std::string>(dualSelected ? "spider-dual" : "spider");
+        icn->miSwing = moreIcons->getSavedValue<std::string>(dualSelected ? "swing-dual" : "swing");
+        icn->miJetpack = moreIcons->getSavedValue<std::string>(dualSelected ? "jetpack-dual" : "jetpack");
+        icn->miTrail = moreIcons->getSavedValue<std::string>(dualSelected ? "trail-dual" : "trail");
+        icn->miDeathEffect = moreIcons->getSavedValue<std::string>(dualSelected ? "death-dual" : "death");
     }
 
     return icn;
@@ -235,35 +237,71 @@ void Icon::addToKit() {
 }
 
 void Icon::applyIcons() {
-    auto gm = GameManager::get();
-    gm->m_playerFrame = cube;
-    gm->m_playerShip = ship;
-    gm->m_playerBall = ball;
-    gm->m_playerBird = ufo;
-    gm->m_playerDart = wave;
-    gm->m_playerRobot = robot;
-    gm->m_playerSpider = spider;
-    gm->m_playerSwing = swing;
-    gm->m_playerJetpack = jetpack;
-    gm->m_playerColor = colour1;
-    gm->m_playerColor2 = colour2;
-    gm->m_playerGlowColor = colour3;
-    gm->m_playerGlow = glow;
-    if (trail > 0) gm->m_playerStreak = trail;
-    if (deathEffect > 0) gm->m_playerDeathEffect = deathEffect;
+    auto separateDualIcons = geode::Loader::get()->getLoadedMod("weebify.separate_dual_icons");
+    auto dualSelected = separateDualIcons && separateDualIcons->getSavedValue("2pselected", false);
+    if (dualSelected) {
+        separateDualIcons->setSavedValue("cube", cube);
+        separateDualIcons->setSavedValue("ship", ship);
+        separateDualIcons->setSavedValue("roll", ball);
+        separateDualIcons->setSavedValue("bird", ufo);
+        separateDualIcons->setSavedValue("dart", wave);
+        separateDualIcons->setSavedValue("robot", robot);
+        separateDualIcons->setSavedValue("spider", spider);
+        separateDualIcons->setSavedValue("swing", swing);
+        separateDualIcons->setSavedValue("jetpack", jetpack);
+        separateDualIcons->setSavedValue("color1", colour1);
+        separateDualIcons->setSavedValue("color2", colour2);
+        separateDualIcons->setSavedValue("colorglow", colour3);
+        separateDualIcons->setSavedValue("glow", glow);
+        if (trail > 0) separateDualIcons->setSavedValue("trail", trail);
+        if (deathEffect > 0) separateDualIcons->setSavedValue("death", deathEffect);
 
-    if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
-        auto moreIconsSave = moreIcons->getSaveContainer();
-        if (moreIconsSave.contains("icon")) moreIcons->setSavedValue("icon", miCube);
-        if (moreIconsSave.contains("ship")) moreIcons->setSavedValue("ship", miShip);
-        if (moreIconsSave.contains("ball")) moreIcons->setSavedValue("ball", miBall);
-        if (moreIconsSave.contains("ufo")) moreIcons->setSavedValue("ufo", miUfo);
-        if (moreIconsSave.contains("wave")) moreIcons->setSavedValue("wave", miWave);
-        if (moreIconsSave.contains("robot")) moreIcons->setSavedValue("robot", miRobot);
-        if (moreIconsSave.contains("spider")) moreIcons->setSavedValue("spider", miSpider);
-        if (moreIconsSave.contains("swing")) moreIcons->setSavedValue("swing", miSwing);
-        if (moreIconsSave.contains("jetpack")) moreIcons->setSavedValue("jetpack", miJetpack);
-        if (moreIconsSave.contains("trail")) moreIcons->setSavedValue("trail", miTrail);
-        if (moreIconsSave.contains("death")) moreIcons->setSavedValue("death", miDeathEffect);
+        if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
+            auto moreIconsSave = moreIcons->getSaveContainer();
+            if (moreIconsSave.contains("icon-dual")) moreIcons->setSavedValue("icon-dual", miCube);
+            if (moreIconsSave.contains("ship-dual")) moreIcons->setSavedValue("ship-dual", miShip);
+            if (moreIconsSave.contains("ball-dual")) moreIcons->setSavedValue("ball-dual", miBall);
+            if (moreIconsSave.contains("ufo-dual")) moreIcons->setSavedValue("ufo-dual", miUfo);
+            if (moreIconsSave.contains("wave-dual")) moreIcons->setSavedValue("wave-dual", miWave);
+            if (moreIconsSave.contains("robot-dual")) moreIcons->setSavedValue("robot-dual", miRobot);
+            if (moreIconsSave.contains("spider-dual")) moreIcons->setSavedValue("spider-dual", miSpider);
+            if (moreIconsSave.contains("swing-dual")) moreIcons->setSavedValue("swing-dual", miSwing);
+            if (moreIconsSave.contains("jetpack-dual")) moreIcons->setSavedValue("jetpack-dual", miJetpack);
+            if (moreIconsSave.contains("trail-dual")) moreIcons->setSavedValue("trail-dual", miTrail);
+            if (moreIconsSave.contains("death-dual")) moreIcons->setSavedValue("death-dual", miDeathEffect);
+        }
+    }
+    else {
+        auto gm = GameManager::get();
+        gm->m_playerFrame = cube;
+        gm->m_playerShip = ship;
+        gm->m_playerBall = ball;
+        gm->m_playerBird = ufo;
+        gm->m_playerDart = wave;
+        gm->m_playerRobot = robot;
+        gm->m_playerSpider = spider;
+        gm->m_playerSwing = swing;
+        gm->m_playerJetpack = jetpack;
+        gm->m_playerColor = colour1;
+        gm->m_playerColor2 = colour2;
+        gm->m_playerGlowColor = colour3;
+        gm->m_playerGlow = glow;
+        if (trail > 0) gm->m_playerStreak = trail;
+        if (deathEffect > 0) gm->m_playerDeathEffect = deathEffect;
+
+        if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
+            auto moreIconsSave = moreIcons->getSaveContainer();
+            if (moreIconsSave.contains("icon")) moreIcons->setSavedValue("icon", miCube);
+            if (moreIconsSave.contains("ship")) moreIcons->setSavedValue("ship", miShip);
+            if (moreIconsSave.contains("ball")) moreIcons->setSavedValue("ball", miBall);
+            if (moreIconsSave.contains("ufo")) moreIcons->setSavedValue("ufo", miUfo);
+            if (moreIconsSave.contains("wave")) moreIcons->setSavedValue("wave", miWave);
+            if (moreIconsSave.contains("robot")) moreIcons->setSavedValue("robot", miRobot);
+            if (moreIconsSave.contains("spider")) moreIcons->setSavedValue("spider", miSpider);
+            if (moreIconsSave.contains("swing")) moreIcons->setSavedValue("swing", miSwing);
+            if (moreIconsSave.contains("jetpack")) moreIcons->setSavedValue("jetpack", miJetpack);
+            if (moreIconsSave.contains("trail")) moreIcons->setSavedValue("trail", miTrail);
+            if (moreIconsSave.contains("death")) moreIcons->setSavedValue("death", miDeathEffect);
+        }
     }
 }

@@ -1,7 +1,7 @@
 #include "IconCell.hpp"
 #include "layers/RenameIconKitLayer.hpp"
 #include "layers/IconSelectLayer.hpp"
-#include <Geode/loader/Dispatch.hpp>
+#include <hiimjustin000.more_icons/include/MoreIcons.hpp>
 
 using namespace geode::prelude;
 
@@ -29,11 +29,8 @@ void IconCell::onTrash(CCObject* sender) {
     else {
         geode::createQuickPopup(
         "Delete Kit",
-        "Are you sure you want to\n<cr>delete</c> this kit?"
-        #ifdef GEODE_IS_DESKTOP
-        + std::string("\n(<ca>Tip:</c> hold shift to bypass this dialogue)")
-        #endif
-        ,
+        GEODE_DESKTOP("Are you sure you want to\n<cr>delete</c> this kit?\n(<ca>Tip:</c> hold shift to bypass this dialogue)",)
+        GEODE_MOBILE("Are you sure you want to\n<cr>delete</c> this kit?",)
         "No", "Delete",
         [this, sender](FLAlertLayer* tis, bool btn2) {
             if (btn2) {
@@ -176,8 +173,7 @@ SimplePlayer* IconCell::createSprite(int id, const std::string& name, int type) 
 
     plr->setScale(0.9f);
 
-    if (!name.empty() && Loader::get()->isModLoaded("hiimjustin000.more_icons"))
-        DispatchEvent<SimplePlayer*, std::string, IconType>("hiimjustin000.more_icons/simple-player", plr, name, as<IconType>(type)).post();
+    if (!name.empty()) MoreIcons::updateSimplePlayer(plr, name, as<IconType>(type));
 
     return plr;
 }

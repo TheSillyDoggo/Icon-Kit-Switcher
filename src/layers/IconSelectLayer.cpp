@@ -145,6 +145,7 @@ bool IconSelectLayer::setup(std::string const& text) {
     //menu->addChildAtPosition(extBtn, Anchor::Center, ccp(-195, 0));
 
     searchBar = TextInput::create(350.0f / 0.8f, "Search Icon Kits");
+    searchBar->setCommonFilter(CommonFilter::Any);
     searchBar->setScale(0.8f);
     searchBar->setDelegate(this);
     menu->addChildAtPosition(searchBar, Anchor::Top, ccp(0, -75));

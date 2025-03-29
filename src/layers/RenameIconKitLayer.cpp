@@ -24,6 +24,7 @@ bool RenameIconKitLayer::setup(std::string const& text, Icon* icon) {
     menu->addChildAtPosition(ok, Anchor::Center, ccp(0, -55));
 
     inp = TextInput::create(260, "Icon Kit Name");
+    inp->setCommonFilter(CommonFilter::Any);
     inp->setString(icon->name);
     menu->addChildAtPosition(inp, Anchor::Center);
 
