@@ -7,7 +7,7 @@ class IconCell : public cocos2d::CCLayerColor {
 protected:
     Icon* icon;
 public:
-    SimplePlayer* createSprite(int id, int type);
+    SimplePlayer* createSprite(int id, const std::string& name, int type);
 
     void onUp(CCObject* sender);
     void onDown(CCObject* sender);

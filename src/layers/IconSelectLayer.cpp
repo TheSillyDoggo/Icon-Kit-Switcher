@@ -1,6 +1,5 @@
 #include "IconSelectLayer.hpp"
 #include "../IconCell.hpp"
-#include "RenameIconKitLayer.hpp"
 
 using namespace geode::prelude;
 
@@ -17,31 +16,22 @@ void IconSelectLayer::refreshIcons(bool move) {
 
     std::stringstream ss;
 
-    std::string searchLower = "";
-    for(auto elem : searchBar->getString())
-        searchLower += std::tolower(elem);
+    std::string searchLower = string::toLower(searchBar->getString());
 
+    std::vector<matjson::Value> arr;
     for (size_t i = 0; i < icons.size(); i++)
     {
-        std::string nameLower = "";
-        for(auto elem : icons[i]->name)
-            nameLower += std::tolower(elem);
-
-        if (nameLower.find(searchLower) != std::string::npos)
+        if (string::toLower(icons[i]->name).find(searchLower) != std::string::npos)
         {
             auto cell = IconCell::create(icons[i], i, i == (icons.size() - 1), true);
 
             content->addChild(cell);
         }
 
-        ss << icons[i]->saveToString();
-        ss << ";";
+        arr.push_back(icons[i]->saveToJson());
     }
 
-    auto s = ss.str();
-    s = s.substr(0, s.size() - 1);
-
-    Mod::get()->setSavedValue("saved-icons", s);
+    Mod::get()->setSavedValue("saved-icons-v2", arr);
     
     error->setVisible(icons.size() == 0);
 
@@ -94,18 +84,15 @@ void IconSelectLayer::textChanged(CCTextInputNode* p0) {
 
         bool res = false;
 
-        std::string searchLower = "";
-        for(auto elem : searchBar->getString())
-            searchLower += std::tolower(elem);
+        std::string searchLower = string::toLower(searchBar->getString());
 
         for (size_t i = 0; i < icons.size(); i++)
         {
-            std::string nameLower = "";
-            for(auto elem : icons[i]->name)
-                nameLower += std::tolower(elem);
-
-            if (nameLower.find(searchLower) != std::string::npos)
+            if (string::toLower(icons[i]->name).find(searchLower) != std::string::npos)
+            {
                 res = true;
+                break;
+            }
         }
 
         error2->setVisible(!res);
@@ -126,11 +113,11 @@ bool IconSelectLayer::setup(std::string const& text) {
 
     instance = this;
 
-    auto ic = Icon::split(Mod::get()->getSavedValue<std::string>("saved-icons"), ';');
+    auto ic = Mod::get()->getSavedValue<std::vector<matjson::Value>>("saved-icons-v2");
 
     for (size_t i = 0; i < ic.size(); i++)
     {
-        icons.push_back(Icon::createIconFromString(ic[i]));
+        icons.push_back(Icon::createIconFromJson(ic[i]));
     }            
 
     auto menu = CCMenu::create();
@@ -158,6 +145,7 @@ bool IconSelectLayer::setup(std::string const& text) {
     //menu->addChildAtPosition(extBtn, Anchor::Center, ccp(-195, 0));
 
     searchBar = TextInput::create(350.0f / 0.8f, "Search Icon Kits");
+    searchBar->setCommonFilter(CommonFilter::Any);
     searchBar->setScale(0.8f);
     searchBar->setDelegate(this);
     menu->addChildAtPosition(searchBar, Anchor::Top, ccp(0, -75));
