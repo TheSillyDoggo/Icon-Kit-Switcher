@@ -1,26 +1,36 @@
 cmake_minimum_required(VERSION 3.21)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+
+if ("${CMAKE_SYSTEM_NAME}" STREQUAL "iOS" OR IOS)
+    set(CMAKE_OSX_ARCHITECTURES "arm64")
+else()
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+endif()
+
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-project(IconKitSwitcher VERSION 1.0.0)
+project(BetterInfo VERSION 1.0.0)
 
-add_library(${PROJECT_NAME} SHARED
-    src/main.cpp
-    src/layers/IconSelectLayer.cpp
-    src/IconCell.cpp
-    src/Icon.cpp
-    src/layers/RenameIconKitLayer.cpp
-    # Add your cpp files here
+file(GLOB_RECURSE SOURCES
+    src/*.cpp
 )
 
-if (NOT DEFINED ENV{GEODE_SDK})
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
+
+if(PROJECT_IS_TOP_LEVEL)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE BI_EXPORTING)
+endif()
+
+if(NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
 else()
     message(STATUS "Found Geode: $ENV{GEODE_SDK}")
 endif()
 
-add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
+add_subdirectory($ENV{GEODE_SDK} $ENV{GEODE_SDK}/build)
 
-setup_geode_mod(${PROJECT_NAME})
+setup_geode_mod(${PROJECT_NAME} EXTERNALS geode.node-ids:1.18.0 cvolton.misc_bugfixes:1.1.3)
+
+target_include_directories(GeodeBindings PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_compile_options(GeodeBindings PRIVATE -include force_includes.h)
