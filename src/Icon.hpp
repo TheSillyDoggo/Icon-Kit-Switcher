@@ -3,7 +3,13 @@
 class Icon {
 public:
     int cube, ship, ball, ufo, wave, robot, spider, swing, colour1, colour2, colour3, trail, jetpack, deathEffect;
-    bool glow, explode; // explode is the shattering effect hope that helps
+    bool glow, explode; // explode (0153) is the shattering effect hope that helps
+    // 0060 - Sets player icon in mini mode to default.
+    // 0061 - Toggles between main and secondary color for the teleport effect in spider mode.
+    // 0062 - Toggles between main and secondary color for the fire effect from dash orbs.
+    // 0096 - Toggles between main and secondary color for the trail in wave mode.
+    bool miniDefault, invertSpiderTeleportColor, invertFireEffectColor, invertWaveTrailColor;
+
     std::string name, uploader;
     bool hasUploaded = false;
     int id = 0;
