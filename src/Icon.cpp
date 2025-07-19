@@ -51,6 +51,15 @@ Icon* Icon::createIconFromString(const std::string& s) {
         icn->jetpack = std::stoi(v[14]);
     if (v.size() > 15)
         icn->hasUploaded = std::stoi(v[15]) == 1 ? true : false;
+    
+    auto gameManager = GameManager::get();
+    auto separateDualIcons = geode::Loader::get()->getLoadedMod("weebify.separate_dual_icons");
+    auto dualSelected = separateDualIcons && separateDualIcons->getSavedValue("2pselected", false);
+    icn->explode = dualSelected ? separateDualIcons->getSavedValue("deathexplode", false) : gameManager->getGameVariable("0153");
+    icn->miniDefault = gm->getGameVariable("0060");
+    icn->invertSpiderTeleportColor = gm->getGameVariable("0061");
+    icn->invertFireEffectColor = gm->getGameVariable("0062");
+    icn->invertWaveTrailColor = gm->getGameVariable("0096");
 
     return icn;
 }
