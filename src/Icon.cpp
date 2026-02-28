@@ -56,10 +56,10 @@ Icon* Icon::createIconFromString(const std::string& s) {
     auto separateDualIcons = geode::Loader::get()->getLoadedMod("weebify.separate_dual_icons");
     auto dualSelected = separateDualIcons && separateDualIcons->getSavedValue("2pselected", false);
     icn->explode = dualSelected ? separateDualIcons->getSavedValue("deathexplode", false) : gameManager->getGameVariable("0153");
-    icn->miniDefault = gm->getGameVariable("0060");
-    icn->invertSpiderTeleportColor = gm->getGameVariable("0061");
-    icn->invertFireEffectColor = gm->getGameVariable("0062");
-    icn->invertWaveTrailColor = gm->getGameVariable("0096");
+    icn->miniDefault = gameManager->getGameVariable("0060");
+    icn->invertSpiderTeleportColor = gameManager->getGameVariable("0061");
+    icn->invertFireEffectColor = gameManager->getGameVariable("0062");
+    icn->invertWaveTrailColor = gameManager->getGameVariable("0096");
 
     return icn;
 }
@@ -93,7 +93,9 @@ Icon* Icon::createIconFromCurrent() {
     icn->invertSpiderTeleportColor = gm->getGameVariable("0061");
     icn->invertFireEffectColor = gm->getGameVariable("0062");
     icn->invertWaveTrailColor = gm->getGameVariable("0096");
-
+    
+    // MoreIcons has to update first, don't wanna accidentally use something that may be broken once it does
+    /*
     if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
         icn->miCube = moreIcons->getSavedValue<std::string>(dualSelected ? "icon-dual" : "icon");
         icn->miShip = moreIcons->getSavedValue<std::string>(dualSelected ? "ship-dual" : "ship");
@@ -107,27 +109,30 @@ Icon* Icon::createIconFromCurrent() {
         icn->miTrail = moreIcons->getSavedValue<std::string>(dualSelected ? "trail-dual" : "trail");
         icn->miDeathEffect = moreIcons->getSavedValue<std::string>(dualSelected ? "death-dual" : "death");
     }
+    */
 
     return icn;
 }
 
-Icon* Icon::createIconFromScore(GJUserScore* gm) {
+Icon* Icon::createIconFromScore(GJUserScore* score) {
     auto icn = new Icon();
 
-    icn->cube = gm->m_playerCube;
-    icn->ship = gm->m_playerShip;
-    icn->ball = gm->m_playerBall;
-    icn->ufo = gm->m_playerUfo;
-    icn->wave = gm->m_playerWave;
-    icn->robot = gm->m_playerRobot;
-    icn->spider = gm->m_playerSpider;
-    icn->swing = gm->m_playerSwing;
-    icn->jetpack = gm->m_playerJetpack;
-    icn->colour1 = gm->m_color1;
-    icn->colour2 = gm->m_color2;
-    icn->colour3 = gm->m_color3;
-    icn->glow = gm->m_glowEnabled;
-    icn->name = gm->m_userName;
+    icn->cube = score->m_playerCube;
+    icn->ship = score->m_playerShip;
+    icn->ball = score->m_playerBall;
+    icn->ufo = score->m_playerUfo;
+    icn->wave = score->m_playerWave;
+    icn->robot = score->m_playerRobot;
+    icn->spider = score->m_playerSpider;
+    icn->swing = score->m_playerSwing;
+    icn->jetpack = score->m_playerJetpack;
+    icn->colour1 = score->m_color1;
+    icn->colour2 = score->m_color2;
+    icn->colour3 = score->m_color3;
+    icn->glow = score->m_glowEnabled;
+    icn->name = score->m_userName;
+    icn->deathEffect = score->m_playerExplosion;
+    icn->trail = score->m_playerStreak;
 
     auto gameManager = GameManager::get();
     auto separateDualIcons = geode::Loader::get()->getLoadedMod("weebify.separate_dual_icons");
@@ -299,7 +304,9 @@ void Icon::applyIcons() {
         separateDualIcons->setSavedValue("deathexplode", explode);
         if (trail > 0) separateDualIcons->setSavedValue("trail", trail);
         if (deathEffect > 0) separateDualIcons->setSavedValue("death", deathEffect);
-
+        
+        // MoreIcons has to update first, don't wanna accidentally use something that may be broken once it does
+        /*
         if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
             auto moreIconsSave = moreIcons->getSaveContainer();
             if (moreIconsSave.contains("icon-dual")) moreIcons->setSavedValue("icon-dual", miCube);
@@ -314,6 +321,7 @@ void Icon::applyIcons() {
             if (moreIconsSave.contains("trail-dual")) moreIcons->setSavedValue("trail-dual", miTrail);
             if (moreIconsSave.contains("death-dual")) moreIcons->setSavedValue("death-dual", miDeathEffect);
         }
+        */
     }
     else {
         gm->m_playerFrame = cube;
@@ -333,6 +341,8 @@ void Icon::applyIcons() {
         if (deathEffect > 0) gm->m_playerDeathEffect = deathEffect;
         gm->setGameVariable("0153", explode);
 
+        // MoreIcons has to update first, don't wanna accidentally use something that may be broken once it does
+        /*
         if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
             auto moreIconsSave = moreIcons->getSaveContainer();
             if (moreIconsSave.contains("icon")) moreIcons->setSavedValue("icon", miCube);
@@ -347,6 +357,7 @@ void Icon::applyIcons() {
             if (moreIconsSave.contains("trail")) moreIcons->setSavedValue("trail", miTrail);
             if (moreIconsSave.contains("death")) moreIcons->setSavedValue("death", miDeathEffect);
         }
+        */
     }
     // since separate dual icons does not affect these, they get set in GameManager regardless 
     gm->setGameVariable("0060", miniDefault);
