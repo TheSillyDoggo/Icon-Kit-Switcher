@@ -12,7 +12,10 @@ void RenameIconKitLayer::onClose(CCObject*) {
 
 }
 
-bool RenameIconKitLayer::setup(std::string const& text, Icon* icon) {
+bool RenameIconKitLayer::init(std::string const& text, Icon* icon) {
+
+    if (!Popup::init(340.f, 170.f)) return false;
+
     this->icon = icon;
 
     setTitle(text);
@@ -35,7 +38,7 @@ bool RenameIconKitLayer::setup(std::string const& text, Icon* icon) {
 
 RenameIconKitLayer* RenameIconKitLayer::create(std::string const& text, Icon *icon) {
     RenameIconKitLayer* pRet = new RenameIconKitLayer();
-    if (pRet->initAnchored(340.f, 170.f, text, icon)) {
+    if (pRet->init(text, icon)) {
         pRet->autorelease();
         return pRet;
     }

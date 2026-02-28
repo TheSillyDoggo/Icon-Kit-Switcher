@@ -5,7 +5,7 @@
 
 #include "../Icon.hpp"
 
-class IconSelectLayer : public geode::Popup<std::string const&>, TextInputDelegate {
+class IconSelectLayer : public geode::Popup, TextInputDelegate {
 protected:
     geode::ScrollLayer* scroll = nullptr;
     geode::TextInput* searchBar = nullptr;
@@ -27,7 +27,7 @@ public:
 
     virtual void textChanged(CCTextInputNode* p0);
 
-    bool setup(std::string const& text);
+    bool init(std::string const& text);
 
     static IconSelectLayer* create(std::string const& text);
 };

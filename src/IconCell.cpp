@@ -1,29 +1,30 @@
 #include "IconCell.hpp"
 #include "layers/RenameIconKitLayer.hpp"
 #include "layers/IconSelectLayer.hpp"
-#include <hiimjustin000.more_icons/include/MoreIcons.hpp>
+// MoreIcons needs to update first
+//#include <hiimjustin000.more_icons/include/MoreIcons.hpp>
 
 using namespace geode::prelude;
 
 void IconCell::onRename(CCObject* sender) {
-    //auto icn = as<Icon*>(as<CCNode*>(sender)->getUserData());
+    //auto icn = static_cast<Icon*>(static_cast<CCNode*>(sender)->getUserData());
 
     RenameIconKitLayer::create("Rename Icon", this->icon)->show();
 }
 
 void IconCell::onUp(CCObject* sender) {
-    std::swap(IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag() - 1]);
+    std::swap(IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag() - 1]);
     IconSelectLayer::get()->refreshIcons(false);
 };
 
 void IconCell::onDown(CCObject* sender) {
-    std::swap(IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag() + 1]);
+    std::swap(IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag() + 1]);
     IconSelectLayer::get()->refreshIcons(false);
 };
 
 void IconCell::onTrash(CCObject* sender) {
     if (CCKeyboardDispatcher::get()->getShiftKeyPressed()) {
-        IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + as<CCNode*>(sender)->getTag());
+        IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + static_cast<CCNode*>(sender)->getTag());
         IconSelectLayer::get()->refreshIcons();
     }
     else {
@@ -34,7 +35,7 @@ void IconCell::onTrash(CCObject* sender) {
         "No", "Delete",
         [this, sender](FLAlertLayer* tis, bool btn2) {
             if (btn2) {
-                IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + as<CCNode*>(sender)->getTag());
+                IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + static_cast<CCNode*>(sender)->getTag());
 
                 IconSelectLayer::get()->refreshIcons();
             }
@@ -163,7 +164,7 @@ bool IconCell::init(Icon* icon, int i, bool isLast, bool compactMode) {
 
 SimplePlayer* IconCell::createSprite(int id, const std::string& name, int type) {
     auto plr = SimplePlayer::create(id);
-    plr->updatePlayerFrame(id, as<IconType>(type));
+    plr->updatePlayerFrame(id, static_cast<IconType>(type));
 
     plr->setColor(GameManager::get()->colorForIdx(icon->colour1));
     plr->setSecondColor(GameManager::get()->colorForIdx(icon->colour2));
@@ -173,7 +174,8 @@ SimplePlayer* IconCell::createSprite(int id, const std::string& name, int type) 
 
     plr->setScale(0.9f);
 
-    if (!name.empty()) MoreIcons::updateSimplePlayer(plr, name, as<IconType>(type));
+    // MoreIcons needs to update first
+    //if (!name.empty()) MoreIcons::updateSimplePlayer(plr, name, static_cast<IconType>(type));
 
     return plr;
 }

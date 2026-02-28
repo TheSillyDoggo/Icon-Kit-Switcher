@@ -105,7 +105,9 @@ void IconSelectLayer::textChanged(CCTextInputNode* p0) {
     refreshIcons();
 }
 
-bool IconSelectLayer::setup(std::string const& text) {
+bool IconSelectLayer::init(std::string const& text) {
+    
+    if (!Popup::init(450.f, 280.f)) return false;
 
     setTitle(text, "goldFont.fnt", 0.8);
 
@@ -176,8 +178,8 @@ bool IconSelectLayer::setup(std::string const& text) {
 
     m_mainLayer->addChildAtPosition(error, Anchor::Center, ccp(0, -10));
 
-    as<CCNodeRGBA*>(error->getChildren()->objectAtIndex(17))->setColor(ccc3(94, 168, 234));
-    as<CCNodeRGBA*>(error->getChildren()->objectAtIndex(18))->setColor(ccc3(94, 168, 234));
+    static_cast<CCNodeRGBA*>(error->getChildren()->objectAtIndex(17))->setColor(ccc3(94, 168, 234));
+    static_cast<CCNodeRGBA*>(error->getChildren()->objectAtIndex(18))->setColor(ccc3(94, 168, 234));
 
     error2 = CCLabelBMFont::create("No results found", "bigFont.fnt");
     error2->setScale(0.625f);
@@ -186,8 +188,8 @@ bool IconSelectLayer::setup(std::string const& text) {
 
     m_mainLayer->addChildAtPosition(error2, Anchor::Center, ccp(0, -10));
 
-    as<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(0))->setColor(ccc3(255, 0, 0));
-    as<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(1))->setColor(ccc3(255, 0, 0));
+    static_cast<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(0))->setColor(ccc3(255, 0, 0));
+    static_cast<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(1))->setColor(ccc3(255, 0, 0));
 
     this->setTouchEnabled(true);
     CCTouchDispatcher::get()->addTargetedDelegate(this, -129, true);
@@ -200,7 +202,7 @@ bool IconSelectLayer::setup(std::string const& text) {
 
 IconSelectLayer* IconSelectLayer::create(std::string const& text) {
     auto ret = new IconSelectLayer();
-    if (ret->initAnchored(450.f, 280.f, text)) {
+    if (ret->init(text)) {
         ret->autorelease();
         return ret;
     }
