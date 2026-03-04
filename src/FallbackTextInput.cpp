@@ -30,7 +30,7 @@ void FallbackTextInput::updateCheck(float)
         {
             auto ch = getInputNode()->m_textLabel->getConfiguration()->getCharacterSet();
 
-            for (auto str : getString())
+            for (auto str : utils::string::split(getString()))
             {
                 if (!ch->contains((int)str))
                 {
