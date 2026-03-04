@@ -71,7 +71,7 @@ class $modify (CCTextInputNode)
 
         if (getUserFlag("fallback"_spr) && m_textField->isVisible())
         {
-            std::string str = index == -1 ? getString() : getString().substr(0, index);
+            std::string str = index == -1 ? getString() : std::string(getString()).substr(0, index);
 
             getStaticTTF()->setString(str.c_str());
             m_cursor->setPositionX((-m_textField->getScaledContentWidth() * m_textField->getAnchorPoint().x) + getStaticTTF()->getScaledContentWidth());
