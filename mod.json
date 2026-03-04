@@ -6,7 +6,7 @@
 		"android": "2.2081",
 		"ios": "2.2081"
 	},
-	"version": "v1.1.0",
+	"version": "v1.1.1",
 	"id": "thesillydoggo.icon_kit_switcher",
 	"name": "Icon Save",
 	"developers": [ "TheSillyDoggo", "Uproxide"],
@@ -15,7 +15,7 @@
 		"geode.node-ids": ">=v1.13.1",
 		"alk.ime-input": {
 			"version": ">=v1.0.4",
-			"importance": "recommended"
+			"required": false
 		}
  	}
 }
