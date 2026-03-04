@@ -1,29 +1,22 @@
 #include "IconCell.hpp"
-#include "layers/RenameIconKitLayer.hpp"
 #include "layers/IconSelectLayer.hpp"
-#include <hiimjustin000.more_icons/include/MoreIcons.hpp>
+// #include <hiimjustin000.more_icons/include/MoreIcons.hpp>
 
 using namespace geode::prelude;
 
-void IconCell::onRename(CCObject* sender) {
-    //auto icn = as<Icon*>(as<CCNode*>(sender)->getUserData());
-
-    RenameIconKitLayer::create("Rename Icon", this->icon)->show();
-}
-
 void IconCell::onUp(CCObject* sender) {
-    std::swap(IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag() - 1]);
+    std::swap(IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag() - 1]);
     IconSelectLayer::get()->refreshIcons(false);
 };
 
 void IconCell::onDown(CCObject* sender) {
-    std::swap(IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[as<CCNode*>(sender)->getTag() + 1]);
+    std::swap(IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag()], IconSelectLayer::get()->icons[static_cast<CCNode*>(sender)->getTag() + 1]);
     IconSelectLayer::get()->refreshIcons(false);
 };
 
 void IconCell::onTrash(CCObject* sender) {
     if (CCKeyboardDispatcher::get()->getShiftKeyPressed()) {
-        IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + as<CCNode*>(sender)->getTag());
+        IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + static_cast<CCNode*>(sender)->getTag());
         IconSelectLayer::get()->refreshIcons();
     }
     else {
@@ -34,7 +27,7 @@ void IconCell::onTrash(CCObject* sender) {
         "No", "Delete",
         [this, sender](FLAlertLayer* tis, bool btn2) {
             if (btn2) {
-                IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + as<CCNode*>(sender)->getTag());
+                IconSelectLayer::get()->icons.erase(IconSelectLayer::get()->icons.begin() + static_cast<CCNode*>(sender)->getTag());
 
                 IconSelectLayer::get()->refreshIcons();
             }
@@ -43,8 +36,9 @@ void IconCell::onTrash(CCObject* sender) {
     }
 };
 
-void IconCell::onUse(CCObject* sender) {
-    //auto v = as<IconCell*>(as<CCNode*>(sender)->getUserData());
+void IconCell::onUse(CCObject* sender)
+{
+    //auto v = static_cast<IconCell*>(static_cast<CCNode*>(sender)->getUserData());
 
     this->icon->applyIcons();
 
@@ -55,7 +49,8 @@ void IconCell::onUse(CCObject* sender) {
     //}
 }
 
-IconCell* IconCell::create(Icon* icon, int i, bool isLast, bool compactMode) {
+IconCell* IconCell::create(Icon* icon, int i, bool isLast, bool compactMode)
+{
     IconCell* pRet = new IconCell();
     if (pRet->init(icon, i, isLast, compactMode)) {
         pRet->autorelease();
@@ -65,9 +60,13 @@ IconCell* IconCell::create(Icon* icon, int i, bool isLast, bool compactMode) {
     return nullptr;
 }
 
-bool IconCell::init(Icon* icon, int i, bool isLast, bool compactMode) {
+bool IconCell::init(Icon* icon, int i, bool isLast, bool compactMode)
+{
     if (!CCLayerColor::init())
         return false;
+
+    if (icon->name.size() == 0)
+        icon->name = "Unnamed Kit";
 
     this->icon = icon;
 
@@ -80,17 +79,16 @@ bool IconCell::init(Icon* icon, int i, bool isLast, bool compactMode) {
 
     this->setAnchorPoint(ccp(0, 0));
 
-    auto nameMenu = CCMenu::create();
-    this->addChild(nameMenu);
-
-    auto name = CCLabelBMFont::create((icon->name.size() != 0 ? icon->name.c_str() : "Unnamed Kit"), "bigFont.fnt");
-    name->limitLabelWidth(300, 0.45f, 0.1f);
-
-    auto nameBtn = CCMenuItemSpriteExtra::create(name, this, menu_selector(IconCell::onRename));
-    nameBtn->setAnchorPoint(ccp(0, 0.5));
-    nameBtn->setUserData(icon);
-    nameBtn->setPosition(-628, -169);
-    nameMenu->addChild(nameBtn);
+    name = FallbackTextInput::create(550, "Icon kit name");
+    name->setScale(0.45f);
+    name->setString(icon->name);
+    name->setAnchorPoint(ccp(0, 1));
+    name->setTextAlign(TextInputAlign::Left);
+    name->setCallback([this](const std::string& text)
+    {
+        this->icon->name = text;
+        IconSelectLayer::get()->saveConfig();
+    });
 
     auto layoutIcons = CCMenu::create();
     layoutIcons->setContentSize(ccp(6969, 0));
@@ -152,18 +150,16 @@ bool IconCell::init(Icon* icon, int i, bool isLast, bool compactMode) {
     
     buttonsMenu->setLayout(AxisLayout::create()->setAutoScale(false));
 
+    this->addChildAtPosition(name, Anchor::TopLeft, ccp(0, 0));
     this->addChildAtPosition(buttonsMenu, Anchor::Right, ccp(-60, 0));
-
-    if (icon->name.size() == 0)
-        icon->name = "Unnamed Kit";
-
     return true;
 }
 
 
-SimplePlayer* IconCell::createSprite(int id, const std::string& name, int type) {
+SimplePlayer* IconCell::createSprite(int id, const std::string& name, int type)
+{
     auto plr = SimplePlayer::create(id);
-    plr->updatePlayerFrame(id, as<IconType>(type));
+    plr->updatePlayerFrame(id, static_cast<IconType>(type));
 
     plr->setColor(GameManager::get()->colorForIdx(icon->colour1));
     plr->setSecondColor(GameManager::get()->colorForIdx(icon->colour2));
@@ -173,7 +169,7 @@ SimplePlayer* IconCell::createSprite(int id, const std::string& name, int type) 
 
     plr->setScale(0.9f);
 
-    if (!name.empty()) MoreIcons::updateSimplePlayer(plr, name, as<IconType>(type));
+    // if (!name.empty()) MoreIcons::updateSimplePlayer(plr, name, static_cast<IconType>(type));
 
     return plr;
 }

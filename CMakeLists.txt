@@ -17,7 +17,7 @@ add_library(${PROJECT_NAME} SHARED
     src/layers/IconSelectLayer.cpp
     src/IconCell.cpp
     src/Icon.cpp
-    src/layers/RenameIconKitLayer.cpp
+    src/FallbackTextInput.cpp
     # Add your cpp files here
 )
 

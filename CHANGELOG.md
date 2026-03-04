@@ -1,4 +1,9 @@
-# Icon Save 2.2 Changelog
+# v1.1.0
+
+- Update for 2.2081
+- Fixed memory leak when loading icon kit popup
+- Added support for different languages in icon kit names
+
 # v1.0.4
 - Updated for 2.206
 - Rewrote UI to use geode::Popup

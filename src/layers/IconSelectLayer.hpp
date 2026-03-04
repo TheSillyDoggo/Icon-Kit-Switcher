@@ -2,32 +2,38 @@
 
 #include <Geode/Geode.hpp>
 #include <Geode/ui/TextInput.hpp>
-
+#include "../FallbackTextInput.hpp"
 #include "../Icon.hpp"
 
-class IconSelectLayer : public geode::Popup<std::string const&>, TextInputDelegate {
-protected:
-    geode::ScrollLayer* scroll = nullptr;
-    geode::TextInput* searchBar = nullptr;
-    cocos2d::CCLabelBMFont* error = nullptr;
-    cocos2d::CCLabelBMFont* error2 = nullptr;
-    bool hasAdded = false;
-    bool compactMode = false;
-    static inline IconSelectLayer* instance = nullptr;
-public:
-    std::vector<Icon*> icons = {};
-    void onCompact(CCObject*);
-    static IconSelectLayer* get() {
-        return instance;
-    }
+class IconSelectLayer : public geode::Popup, TextInputDelegate
+{
+    protected:
+        CCMenuItemToggler* compactToggle = nullptr;
+        geode::ScrollLayer* scroll = nullptr;
+        FallbackTextInput* searchBar = nullptr;
+        cocos2d::CCLabelBMFont* error = nullptr;
+        cocos2d::CCLabelBMFont* error2 = nullptr;
+        bool hasAdded = false;
+        bool compactMode = false;
+        static inline IconSelectLayer* instance = nullptr;
 
-    void refreshIcons(bool move = true);
+        ~IconSelectLayer();
 
-    void onNew(cocos2d::CCObject*);
+    public:
+        static IconSelectLayer* create(std::string const& text);
 
-    virtual void textChanged(CCTextInputNode* p0);
+        std::vector<Icon*> icons = {};
+        void onCompact(CCObject* sender);
+        static IconSelectLayer* get() {
+            return instance;
+        }
 
-    bool setup(std::string const& text);
+        void onNew(cocos2d::CCObject* sender);
 
-    static IconSelectLayer* create(std::string const& text);
+        void refreshIcons(bool move = true);
+        void saveConfig();
+
+        virtual void textChanged(CCTextInputNode* p0);
+
+        bool setup(std::string const& text);
 };

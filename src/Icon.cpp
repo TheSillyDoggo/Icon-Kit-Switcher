@@ -2,19 +2,8 @@
 #include "layers/IconSelectLayer.hpp"
 #include <Geode/Geode.hpp>
 
-std::vector<std::string> Icon::split(const std::string& input, char delimiter) {
-    std::vector<std::string> tokens;
-    std::stringstream ss(input);
-    std::string token;
-    
-    while (std::getline(ss, token, delimiter)) {
-        tokens.push_back(token);
-    }
-    
-    return tokens;
-}
-
-Icon* Icon::createIconFromString(const std::string& s) {
+Icon* Icon::createIconFromString(const std::string& s)
+{
     auto icn = new Icon();
 
     auto v = geode::utils::string::split(s, ":");
@@ -55,7 +44,8 @@ Icon* Icon::createIconFromString(const std::string& s) {
     return icn;
 }
 
-Icon* Icon::createIconFromCurrent() {
+Icon* Icon::createIconFromCurrent()
+{
     auto icn = new Icon();
 
     auto gm = GameManager::get();
@@ -97,7 +87,8 @@ Icon* Icon::createIconFromCurrent() {
     return icn;
 }
 
-Icon* Icon::createIconFromScore(GJUserScore* gm) {
+Icon* Icon::createIconFromScore(GJUserScore* gm)
+{
     auto icn = new Icon();
 
     icn->cube = gm->m_playerCube;
@@ -118,7 +109,8 @@ Icon* Icon::createIconFromScore(GJUserScore* gm) {
     return icn;
 }
 
-Icon* Icon::createIconFromJson(const matjson::Value& js) {
+Icon* Icon::createIconFromJson(const matjson::Value& js)
+{
     auto icn = new Icon();
 
     icn->cube = (int)js["playerCube"].asInt().unwrapOr(1);
@@ -158,7 +150,8 @@ Icon* Icon::createIconFromJson(const matjson::Value& js) {
     return icn;
 }
 
-std::string Icon::saveToString() {
+std::string Icon::saveToString()
+{
     std::stringstream ss;
 
     ss << cube;
@@ -196,7 +189,8 @@ std::string Icon::saveToString() {
     return ss.str();
 }
 
-matjson::Value Icon::saveToJson() {
+matjson::Value Icon::saveToJson()
+{
     matjson::Value js;
 
     js["playerCube"] = cube;
@@ -229,17 +223,20 @@ matjson::Value Icon::saveToJson() {
     return js;
 }
 
-void Icon::addToKit() {
+void Icon::addToKit()
+{
     cocos2d::CCScene::get()->addChild(TextAlertPopup::create("Saved Icon to Icon Kit", 0.5f, 0.6f, 150, ""), 9999999);
 
     IconSelectLayer::get()->icons.push_back(this);
     IconSelectLayer::get()->refreshIcons();
 }
 
-void Icon::applyIcons() {
+void Icon::applyIcons()
+{
     auto separateDualIcons = geode::Loader::get()->getLoadedMod("weebify.separate_dual_icons");
     auto dualSelected = separateDualIcons && separateDualIcons->getSavedValue("2pselected", false);
-    if (dualSelected) {
+    if (dualSelected)
+    {
         separateDualIcons->setSavedValue("cube", cube);
         separateDualIcons->setSavedValue("ship", ship);
         separateDualIcons->setSavedValue("roll", ball);
@@ -256,7 +253,8 @@ void Icon::applyIcons() {
         if (trail > 0) separateDualIcons->setSavedValue("trail", trail);
         if (deathEffect > 0) separateDualIcons->setSavedValue("death", deathEffect);
 
-        if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
+        if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons"))
+        {
             auto moreIconsSave = moreIcons->getSaveContainer();
             if (moreIconsSave.contains("icon-dual")) moreIcons->setSavedValue("icon-dual", miCube);
             if (moreIconsSave.contains("ship-dual")) moreIcons->setSavedValue("ship-dual", miShip);
@@ -271,7 +269,8 @@ void Icon::applyIcons() {
             if (moreIconsSave.contains("death-dual")) moreIcons->setSavedValue("death-dual", miDeathEffect);
         }
     }
-    else {
+    else
+    {
         auto gm = GameManager::get();
         gm->m_playerFrame = cube;
         gm->m_playerShip = ship;
@@ -289,7 +288,8 @@ void Icon::applyIcons() {
         if (trail > 0) gm->m_playerStreak = trail;
         if (deathEffect > 0) gm->m_playerDeathEffect = deathEffect;
 
-        if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons")) {
+        if (auto moreIcons = geode::Loader::get()->getLoadedMod("hiimjustin000.more_icons"))
+        {
             auto moreIconsSave = moreIcons->getSaveContainer();
             if (moreIconsSave.contains("icon")) moreIcons->setSavedValue("icon", miCube);
             if (moreIconsSave.contains("ship")) moreIcons->setSavedValue("ship", miShip);
@@ -304,4 +304,42 @@ void Icon::applyIcons() {
             if (moreIconsSave.contains("death")) moreIcons->setSavedValue("death", miDeathEffect);
         }
     }
+}
+
+#define CMP_RET_FALSE($var) \
+if (this->$var != icon->$var) \
+    return false;
+
+bool Icon::matches(Icon* icon)
+{
+    CMP_RET_FALSE(cube);
+    CMP_RET_FALSE(ship);
+    CMP_RET_FALSE(ball);
+    CMP_RET_FALSE(ufo);
+    CMP_RET_FALSE(wave);
+    CMP_RET_FALSE(robot);
+    CMP_RET_FALSE(spider);
+    CMP_RET_FALSE(swing);
+    CMP_RET_FALSE(colour1);
+    CMP_RET_FALSE(colour2);
+    CMP_RET_FALSE(colour3);
+    CMP_RET_FALSE(trail);
+    CMP_RET_FALSE(jetpack);
+    CMP_RET_FALSE(deathEffect);
+    CMP_RET_FALSE(glow);
+    CMP_RET_FALSE(explode); // explode is the shattering effect hope that helps
+    // std::string name, uploader;
+    CMP_RET_FALSE(miCube);
+    CMP_RET_FALSE(miShip);
+    CMP_RET_FALSE(miBall);
+    CMP_RET_FALSE(miUfo);
+    CMP_RET_FALSE(miWave);
+    CMP_RET_FALSE(miRobot);
+    CMP_RET_FALSE(miSpider);
+    CMP_RET_FALSE(miSwing);
+    CMP_RET_FALSE(miTrail);
+    CMP_RET_FALSE(miJetpack);
+    CMP_RET_FALSE(miDeathEffect);
+
+    return true;
 }

@@ -3,11 +3,37 @@
 
 using namespace geode::prelude;
 
-void IconSelectLayer::onCompact(CCObject* sender) {
+IconSelectLayer* IconSelectLayer::create(std::string const& text)
+{
+    auto ret = new IconSelectLayer();
+    if (ret->init(ccp(450.f, 280.f), "geode.loader/GE_square03.png"))
+    {
+        ret->setup(text);
+        ret->autorelease();
+        return ret;
+    }
+
+    delete ret;
+    return nullptr;
+}
+
+void IconSelectLayer::onCompact(CCObject* sender)
+{
     compactMode = !compactMode;
-    Mod::get()->setSavedValue<bool>("compact-mode", compactMode);
+    Mod::get()->setSavedValue<bool>("use-compact-mode", compactMode);
 
     refreshIcons();
+}
+
+void IconSelectLayer::saveConfig()
+{
+    std::vector<matjson::Value> arr;
+    for (size_t i = 0; i < icons.size(); i++)
+    {
+        arr.push_back(icons[i]->saveToJson());
+    }
+
+    Mod::get()->setSavedValue("saved-icons-v2", arr);
 }
 
 void IconSelectLayer::refreshIcons(bool move) {
@@ -23,7 +49,7 @@ void IconSelectLayer::refreshIcons(bool move) {
     {
         if (string::toLower(icons[i]->name).find(searchLower) != std::string::npos)
         {
-            auto cell = IconCell::create(icons[i], i, i == (icons.size() - 1), true);
+            auto cell = IconCell::create(icons[i], i, i == (icons.size() - 1), compactMode);
 
             content->addChild(cell);
         }
@@ -77,7 +103,8 @@ void IconSelectLayer::onNew(CCObject* sender) {
     CCScene::get()->addChild(TextAlertPopup::create("You've already added this icon kit", 0.5f, 0.6f, 150, ""), 9999999);
 }
 
-void IconSelectLayer::textChanged(CCTextInputNode* p0) {
+void IconSelectLayer::textChanged(CCTextInputNode* p0)
+{
     if (searchBar->getString().size() != 0)
     {
         error->setVisible(false);
@@ -105,20 +132,25 @@ void IconSelectLayer::textChanged(CCTextInputNode* p0) {
     refreshIcons();
 }
 
-bool IconSelectLayer::setup(std::string const& text) {
-
+bool IconSelectLayer::setup(std::string const& text)
+{
     setTitle(text, "goldFont.fnt", 0.8);
-
-    compactMode = true;
-
+    
+    compactMode = Mod::get()->getSavedValue<bool>("use-compact-mode", true);
     instance = this;
+
+    auto compactOff = ButtonSprite::create(CCSprite::createWithSpriteFrameName("GJ_smallModeIcon_001.png"), 40, false, 40, "GJ_button_01.png", 1.0f);
+    auto compactOn = ButtonSprite::create(CCSprite::createWithSpriteFrameName("GJ_smallModeIcon_001.png"), 40, false, 40, "GJ_button_02.png", 1.0f);
+
+    compactToggle = CCMenuItemToggler::create(compactOff, compactOn, this, menu_selector(IconSelectLayer::onCompact));
+    compactToggle->toggle(compactMode);
 
     auto ic = Mod::get()->getSavedValue<std::vector<matjson::Value>>("saved-icons-v2");
 
     for (size_t i = 0; i < ic.size(); i++)
     {
         icons.push_back(Icon::createIconFromJson(ic[i]));
-    }            
+    }
 
     auto menu = CCMenu::create();
     m_mainLayer->addChildAtPosition(menu, Anchor::Center);
@@ -126,25 +158,7 @@ bool IconSelectLayer::setup(std::string const& text) {
     auto ok = CCMenuItemSpriteExtra::create(ButtonSprite::create("OK"), this, menu_selector(IconSelectLayer::onClose));
     menu->addChildAtPosition(ok, Anchor::Bottom, ccp(0, 45));
 
-    auto unextendedIconSpr = CCSprite::create("GJ_button_02.png"); // shamelessly stolen from geode :)
-    unextendedIconSpr->setScale(.75f);
-
-    auto unextendedIconTopSpr = CCSprite::createWithSpriteFrameName("GJ_smallModeIcon_001.png");
-    unextendedIconTopSpr->setPosition(unextendedIconSpr->getContentSize() / 2);
-    unextendedIconSpr->addChild(unextendedIconTopSpr);
-
-    auto extendedIconSpr = CCSprite::create("GJ_button_01.png");
-    extendedIconSpr->setScale(.75f);
-
-    auto extendedIconTopSpr = CCSprite::createWithSpriteFrameName("GJ_smallModeIcon_001.png");
-    extendedIconTopSpr->setPosition(extendedIconSpr->getContentSize() / 2);
-    extendedIconSpr->addChild(extendedIconTopSpr);
-
-    //auto extBtn = CCMenuItemToggler::create(extendedIconSpr, unextendedIconSpr, this, menu_selector(IconSelectLayer::onCompact));
-    //extBtn->toggle(compactMode);
-    //menu->addChildAtPosition(extBtn, Anchor::Center, ccp(-195, 0));
-
-    searchBar = TextInput::create(350.0f / 0.8f, "Search Icon Kits");
+    searchBar = FallbackTextInput::create(350.0f / 0.8f, "Search Icon Kits");
     searchBar->setCommonFilter(CommonFilter::Any);
     searchBar->setScale(0.8f);
     searchBar->setDelegate(this);
@@ -156,6 +170,8 @@ bool IconSelectLayer::setup(std::string const& text) {
     m_mainLayer->addChildAtPosition(bg, Anchor::Center, ccp(0, -10));
 
     scroll = ScrollLayer::create(ccp(350, 160));
+    scroll->m_peekLimitTop = 15;
+    scroll->m_peekLimitBottom = 15;
     scroll->setAnchorPoint(ccp(0, 0));
     scroll->ignoreAnchorPointForPosition(false);
 
@@ -176,8 +192,8 @@ bool IconSelectLayer::setup(std::string const& text) {
 
     m_mainLayer->addChildAtPosition(error, Anchor::Center, ccp(0, -10));
 
-    as<CCNodeRGBA*>(error->getChildren()->objectAtIndex(17))->setColor(ccc3(94, 168, 234));
-    as<CCNodeRGBA*>(error->getChildren()->objectAtIndex(18))->setColor(ccc3(94, 168, 234));
+    static_cast<CCNodeRGBA*>(error->getChildren()->objectAtIndex(17))->setColor(ccc3(94, 168, 234));
+    static_cast<CCNodeRGBA*>(error->getChildren()->objectAtIndex(18))->setColor(ccc3(94, 168, 234));
 
     error2 = CCLabelBMFont::create("No results found", "bigFont.fnt");
     error2->setScale(0.625f);
@@ -186,8 +202,8 @@ bool IconSelectLayer::setup(std::string const& text) {
 
     m_mainLayer->addChildAtPosition(error2, Anchor::Center, ccp(0, -10));
 
-    as<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(0))->setColor(ccc3(255, 0, 0));
-    as<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(1))->setColor(ccc3(255, 0, 0));
+    static_cast<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(0))->setColor(ccc3(255, 0, 0));
+    static_cast<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(1))->setColor(ccc3(255, 0, 0));
 
     this->setTouchEnabled(true);
     CCTouchDispatcher::get()->addTargetedDelegate(this, -129, true);
@@ -198,13 +214,10 @@ bool IconSelectLayer::setup(std::string const& text) {
     return true;
 }
 
-IconSelectLayer* IconSelectLayer::create(std::string const& text) {
-    auto ret = new IconSelectLayer();
-    if (ret->initAnchored(450.f, 280.f, text)) {
-        ret->autorelease();
-        return ret;
+IconSelectLayer::~IconSelectLayer()
+{
+    for (auto icon : icons)
+    {
+        delete icon;
     }
-
-    delete ret;
-    return nullptr;
 }

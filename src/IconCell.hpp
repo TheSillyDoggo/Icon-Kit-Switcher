@@ -2,20 +2,22 @@
 
 #include <Geode/Geode.hpp>
 #include "Icon.hpp"
+#include "FallbackTextInput.hpp"
 
-class IconCell : public cocos2d::CCLayerColor {
-protected:
-    Icon* icon;
-public:
-    SimplePlayer* createSprite(int id, const std::string& name, int type);
+class IconCell : public cocos2d::CCLayerColor
+{
+    protected:
+        Icon* icon = nullptr;
+        FallbackTextInput* name = nullptr;
 
-    void onUp(CCObject* sender);
-    void onDown(CCObject* sender);
-    void onUse(CCObject* sender);
-    void onTrash(CCObject* sender);
-    void onRename(CCObject* sender);
+    public:
+        static IconCell* create(Icon* icon, int i, bool isLast, bool isCompactMode);
+        SimplePlayer* createSprite(int id, const std::string& name, int type);
 
-    bool init(Icon* icon, int i, bool isLast, bool compactMode);
+        void onUp(CCObject* sender);
+        void onDown(CCObject* sender);
+        void onUse(CCObject* sender);
+        void onTrash(CCObject* sender);
 
-    static IconCell* create(Icon* icon, int i, bool isLast, bool isCompactMode);
+        bool init(Icon* icon, int i, bool isLast, bool compactMode);
 };
