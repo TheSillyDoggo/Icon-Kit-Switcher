@@ -42,7 +42,7 @@ void IconCell::onUse(CCObject* sender)
 
     this->icon->applyIcons();
 
-    CCScene::get()->addChild(TextAlertPopup::create("Set selected icons", 0.5f, 0.6f, 150, ""), 9999999);
+    geode::Notification::create("Set selected icons")->show();
 
     //if (auto garage = getChildOfType<GJGarageLayer>(CCScene::get(), 0)) {
     //    garage->updatePlayerColors();

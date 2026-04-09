@@ -56,7 +56,7 @@ class $modify (ProfilePageExt, ProfilePage)
 		savedIcons.push_back(icn->saveToJson());
 		Mod::get()->setSavedValue("saved-icons-v2", savedIcons);
 
-		CCScene::get()->addChild(TextAlertPopup::create("Saved Icon to Icon Kit", 0.5f, 0.6f, 150, ""), 9999999);
+		geode::Notification::create("Saved Icon to Icon Kit")->show();
 	}
 
 	void loadPageFromUserInfo(GJUserScore* p0)

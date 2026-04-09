@@ -97,10 +97,10 @@ void IconSelectLayer::onNew(CCObject* sender) {
 
         refreshIcons();
 
-        return CCScene::get()->addChild(TextAlertPopup::create("Successfully saved to icon kit", 0.5f, 0.6f, 150, ""), 9999999);
+        geode::Notification::create("Successfully saved to icon kit")->show();
     }
 
-    CCScene::get()->addChild(TextAlertPopup::create("You've already added this icon kit", 0.5f, 0.6f, 150, ""), 9999999);
+    geode::Notification::create("You've already added this icon kit")->show();
 }
 
 void IconSelectLayer::textChanged(CCTextInputNode* p0)
@@ -204,10 +204,6 @@ bool IconSelectLayer::setup(std::string const& text)
 
     static_cast<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(0))->setColor(ccc3(255, 0, 0));
     static_cast<CCNodeRGBA*>(error2->getChildren()->objectAtIndex(1))->setColor(ccc3(255, 0, 0));
-
-    this->setTouchEnabled(true);
-    CCTouchDispatcher::get()->addTargetedDelegate(this, -129, true);
-    CCTouchDispatcher::get()->addTargetedDelegate(scroll, -130, true);
 
     refreshIcons();
 
