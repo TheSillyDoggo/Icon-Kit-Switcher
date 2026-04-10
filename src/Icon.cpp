@@ -225,7 +225,7 @@ matjson::Value Icon::saveToJson()
 
 void Icon::addToKit()
 {
-    cocos2d::CCScene::get()->addChild(TextAlertPopup::create("Saved Icon to Icon Kit", 0.5f, 0.6f, 150, ""), 9999999);
+    geode::Notification::create("Successfully saved to icon kit")->show();
 
     IconSelectLayer::get()->icons.push_back(this);
     IconSelectLayer::get()->refreshIcons();
