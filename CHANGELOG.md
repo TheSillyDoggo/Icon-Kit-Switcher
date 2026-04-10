@@ -1,3 +1,8 @@
+# v1.1.2
+
+- Fixed Memory Leak -Alphalaneous
+- Change to use geode::Notification -Alphalaneous
+
 # v1.1.0
 
 - Update for 2.2081
